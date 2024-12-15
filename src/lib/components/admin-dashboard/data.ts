@@ -145,7 +145,7 @@ export const updateUnmitigatedRisksCount = async (): Promise<void> => {
 export const updateOpportunitiesCount = async (): Promise<void> => {
     try {
         const { data, error } = await supabase
-            .from('opportunities')
+            .from('opt_monitoring')
             .select('id');
         if (error) throw error;
 
