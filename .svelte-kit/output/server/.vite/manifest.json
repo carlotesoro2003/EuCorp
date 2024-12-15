@@ -1,0 +1,655 @@
+{
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "name": "internal",
+    "src": ".svelte-kit/generated/server/internal.js",
+    "isEntry": true,
+    "imports": [
+      "_internal.js"
+    ]
+  },
+  "_DeptPlansMonitoring.js": {
+    "file": "chunks/DeptPlansMonitoring.js",
+    "name": "DeptPlansMonitoring",
+    "imports": [
+      "_index.js",
+      "_Icon.js",
+      "_supabaseClient.js",
+      "_search.js",
+      "_download.js",
+      "_loader-circle.js"
+    ]
+  },
+  "_Icon.js": {
+    "file": "chunks/Icon.js",
+    "name": "Icon",
+    "imports": [
+      "_index.js"
+    ]
+  },
+  "_Login.svelte_svelte_type_style_lang.js": {
+    "file": "_app/immutable/assets/Login.9zYHWIvY.css",
+    "src": "_Login.svelte_svelte_type_style_lang.js"
+  },
+  "_arrow-up-down.js": {
+    "file": "chunks/arrow-up-down.js",
+    "name": "arrow-up-down",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_chevron-left.js": {
+    "file": "chunks/chevron-left.js",
+    "name": "chevron-left",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_client.js": {
+    "file": "chunks/client.js",
+    "name": "client",
+    "imports": [
+      "_exports.js"
+    ]
+  },
+  "_download.js": {
+    "file": "chunks/download.js",
+    "name": "download",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_exports.js": {
+    "file": "chunks/exports.js",
+    "name": "exports"
+  },
+  "_eye.js": {
+    "file": "chunks/eye.js",
+    "name": "eye",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_index.js": {
+    "file": "chunks/index.js",
+    "name": "index"
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js",
+    "name": "index"
+  },
+  "_index3.js": {
+    "file": "chunks/index3.js",
+    "name": "index",
+    "imports": [
+      "_index.js"
+    ]
+  },
+  "_internal.js": {
+    "file": "chunks/internal.js",
+    "name": "internal",
+    "imports": [
+      "_index.js"
+    ]
+  },
+  "_lightbulb.js": {
+    "file": "chunks/lightbulb.js",
+    "name": "lightbulb",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_loader-circle.js": {
+    "file": "chunks/loader-circle.js",
+    "name": "loader-circle",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_pencil.js": {
+    "file": "chunks/pencil.js",
+    "name": "pencil",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_plus.js": {
+    "file": "chunks/plus.js",
+    "name": "plus",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_search.js": {
+    "file": "chunks/search.js",
+    "name": "search",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_sheet-content.js": {
+    "file": "chunks/sheet-content.js",
+    "name": "sheet-content",
+    "imports": [
+      "_index3.js",
+      "_index.js",
+      "_x.js"
+    ]
+  },
+  "_stores.js": {
+    "file": "chunks/stores.js",
+    "name": "stores",
+    "imports": [
+      "_index.js",
+      "_client.js"
+    ]
+  },
+  "_supabaseClient.js": {
+    "file": "chunks/supabaseClient.js",
+    "name": "supabaseClient"
+  },
+  "_tailwind.js": {
+    "file": "_app/immutable/assets/tailwind.B5uCTvPp.css",
+    "src": "_tailwind.js"
+  },
+  "_target.js": {
+    "file": "chunks/target.js",
+    "name": "target",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_trash-2.js": {
+    "file": "chunks/trash-2.js",
+    "name": "trash-2",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_triangle-alert.js": {
+    "file": "chunks/triangle-alert.js",
+    "name": "triangle-alert",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_user.js": {
+    "file": "chunks/user.js",
+    "name": "user",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "_x.js": {
+    "file": "chunks/x.js",
+    "name": "x",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/error.svelte": {
+    "file": "entries/fallbacks/error.svelte.js",
+    "name": "entries/fallbacks/error.svelte",
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/error.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_stores.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/layout.svelte": {
+    "file": "entries/fallbacks/layout.svelte.js",
+    "name": "entries/fallbacks/layout.svelte",
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "name": "index",
+    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_internal.js",
+      "_index2.js",
+      "_exports.js",
+      "_index3.js"
+    ]
+  },
+  "src/routes/(app)/+layout.svelte": {
+    "file": "entries/pages/(app)/_layout.svelte.js",
+    "name": "entries/pages/(app)/_layout.svelte",
+    "src": "src/routes/(app)/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_client.js",
+      "_supabaseClient.js",
+      "_stores.js",
+      "_sheet-content.js",
+      "_index3.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.8h40zy5F.css",
+      "_app/immutable/assets/tailwind.B5uCTvPp.css",
+      "_app/immutable/assets/Login.9zYHWIvY.css"
+    ]
+  },
+  "src/routes/(app)/+layout.ts": {
+    "file": "entries/pages/(app)/_layout.ts.js",
+    "name": "entries/pages/(app)/_layout.ts",
+    "src": "src/routes/(app)/+layout.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/(app)/api/evaluate-goal/+server.ts": {
+    "file": "entries/endpoints/(app)/api/evaluate-goal/_server.ts.js",
+    "name": "entries/endpoints/(app)/api/evaluate-goal/_server.ts",
+    "src": "src/routes/(app)/api/evaluate-goal/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "src/routes/(app)/api/summary-report-opt-monitoring/+server.ts": {
+    "file": "entries/endpoints/(app)/api/summary-report-opt-monitoring/_server.ts.js",
+    "name": "entries/endpoints/(app)/api/summary-report-opt-monitoring/_server.ts",
+    "src": "src/routes/(app)/api/summary-report-opt-monitoring/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "src/routes/(app)/api/summary-report-plan-monitoring/+server.ts": {
+    "file": "entries/endpoints/(app)/api/summary-report-plan-monitoring/_server.ts.js",
+    "name": "entries/endpoints/(app)/api/summary-report-plan-monitoring/_server.ts",
+    "src": "src/routes/(app)/api/summary-report-plan-monitoring/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "src/routes/(app)/auth/callback/+server.ts": {
+    "file": "entries/endpoints/(app)/auth/callback/_server.ts.js",
+    "name": "entries/endpoints/(app)/auth/callback/_server.ts",
+    "src": "src/routes/(app)/auth/callback/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "src/routes/(app)/classification/+page.svelte": {
+    "file": "entries/pages/(app)/classification/_page.svelte.js",
+    "name": "entries/pages/(app)/classification/_page.svelte",
+    "src": "src/routes/(app)/classification/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_x.js",
+      "_pencil.js",
+      "_trash-2.js",
+      "_Icon.js",
+      "_search.js",
+      "_plus.js"
+    ],
+    "css": [
+      "_app/immutable/assets/tailwind.B5uCTvPp.css"
+    ]
+  },
+  "src/routes/(app)/dashboard/+page.svelte": {
+    "file": "entries/pages/(app)/dashboard/_page.svelte.js",
+    "name": "entries/pages/(app)/dashboard/_page.svelte",
+    "src": "src/routes/(app)/dashboard/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_client.js",
+      "_supabaseClient.js",
+      "_loader-circle.js"
+    ],
+    "css": [
+      "_app/immutable/assets/tailwind.B5uCTvPp.css"
+    ]
+  },
+  "src/routes/(app)/departments/+page.svelte": {
+    "file": "entries/pages/(app)/departments/_page.svelte.js",
+    "name": "entries/pages/(app)/departments/_page.svelte",
+    "src": "src/routes/(app)/departments/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_pencil.js",
+      "_trash-2.js",
+      "_Icon.js",
+      "_search.js",
+      "_download.js",
+      "_plus.js",
+      "_x.js"
+    ],
+    "css": [
+      "_app/immutable/assets/tailwind.B5uCTvPp.css"
+    ]
+  },
+  "src/routes/(app)/leads/+page.svelte": {
+    "file": "entries/pages/(app)/leads/_page.svelte.js",
+    "name": "entries/pages/(app)/leads/_page.svelte",
+    "src": "src/routes/(app)/leads/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_user.js",
+      "_pencil.js",
+      "_trash-2.js",
+      "_Icon.js",
+      "_search.js",
+      "_arrow-up-down.js",
+      "_plus.js",
+      "_x.js"
+    ]
+  },
+  "src/routes/(app)/login/+page.svelte": {
+    "file": "entries/pages/(app)/login/_page.svelte.js",
+    "name": "entries/pages/(app)/login/_page.svelte",
+    "src": "src/routes/(app)/login/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_Icon.js",
+      "_eye.js"
+    ],
+    "css": [
+      "_app/immutable/assets/Login.9zYHWIvY.css"
+    ]
+  },
+  "src/routes/(app)/monitoring/+page.svelte": {
+    "file": "entries/pages/(app)/monitoring/_page.svelte.js",
+    "name": "entries/pages/(app)/monitoring/_page.svelte",
+    "src": "src/routes/(app)/monitoring/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_index3.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.CoufgFaY.css",
+      "_app/immutable/assets/tailwind.B5uCTvPp.css"
+    ]
+  },
+  "src/routes/(app)/monitoring/mid-year/+page.svelte": {
+    "file": "entries/pages/(app)/monitoring/mid-year/_page.svelte.js",
+    "name": "entries/pages/(app)/monitoring/mid-year/_page.svelte",
+    "src": "src/routes/(app)/monitoring/mid-year/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_DeptPlansMonitoring.js",
+      "_triangle-alert.js",
+      "_lightbulb.js"
+    ]
+  },
+  "src/routes/(app)/monitoring/year-end/+page.svelte": {
+    "file": "entries/pages/(app)/monitoring/year-end/_page.svelte.js",
+    "name": "entries/pages/(app)/monitoring/year-end/_page.svelte",
+    "src": "src/routes/(app)/monitoring/year-end/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_DeptPlansMonitoring.js",
+      "_triangle-alert.js",
+      "_lightbulb.js"
+    ]
+  },
+  "src/routes/(app)/opportunities/+page.svelte": {
+    "file": "entries/pages/(app)/opportunities/_page.svelte.js",
+    "name": "entries/pages/(app)/opportunities/_page.svelte",
+    "src": "src/routes/(app)/opportunities/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_pencil.js",
+      "_trash-2.js",
+      "_lightbulb.js",
+      "_arrow-up-down.js",
+      "_search.js",
+      "_download.js",
+      "_x.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/(app)/plans/+page.svelte": {
+    "file": "entries/pages/(app)/plans/_page.svelte.js",
+    "name": "entries/pages/(app)/plans/_page.svelte",
+    "src": "src/routes/(app)/plans/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_client.js",
+      "_target.js",
+      "_search.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/(app)/plans/[id]/+page.svelte": {
+    "file": "entries/pages/(app)/plans/_id_/_page.svelte.js",
+    "name": "entries/pages/(app)/plans/_id_/_page.svelte",
+    "src": "src/routes/(app)/plans/[id]/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_client.js"
+    ]
+  },
+  "src/routes/(app)/plans/[id]/[id]/+page.svelte": {
+    "file": "entries/pages/(app)/plans/_id_/_id_/_page.svelte.js",
+    "name": "entries/pages/(app)/plans/_id_/_id_/_page.svelte",
+    "src": "src/routes/(app)/plans/[id]/[id]/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_client.js",
+      "_chevron-left.js",
+      "_search.js",
+      "_arrow-up-down.js",
+      "_Icon.js",
+      "_x.js",
+      "_pencil.js",
+      "_trash-2.js"
+    ]
+  },
+  "src/routes/(app)/plans/operationalPlans/+page.svelte": {
+    "file": "entries/pages/(app)/plans/operationalPlans/_page.svelte.js",
+    "name": "entries/pages/(app)/plans/operationalPlans/_page.svelte",
+    "src": "src/routes/(app)/plans/operationalPlans/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_client.js",
+      "_arrow-up-down.js",
+      "_eye.js",
+      "_target.js",
+      "_Icon.js",
+      "_search.js"
+    ]
+  },
+  "src/routes/(app)/plans/operationalPlans/[id]/+page.svelte": {
+    "file": "entries/pages/(app)/plans/operationalPlans/_id_/_page.svelte.js",
+    "name": "entries/pages/(app)/plans/operationalPlans/_id_/_page.svelte",
+    "src": "src/routes/(app)/plans/operationalPlans/[id]/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_client.js",
+      "_supabaseClient.js",
+      "_trash-2.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/(app)/plans/strategicPlans/+page.svelte": {
+    "file": "entries/pages/(app)/plans/strategicPlans/_page.svelte.js",
+    "name": "entries/pages/(app)/plans/strategicPlans/_page.svelte",
+    "src": "src/routes/(app)/plans/strategicPlans/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_target.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/(app)/profile/+page.svelte": {
+    "file": "entries/pages/(app)/profile/_page.svelte.js",
+    "name": "entries/pages/(app)/profile/_page.svelte",
+    "src": "src/routes/(app)/profile/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_user.js",
+      "_Icon.js"
+    ]
+  },
+  "src/routes/(app)/riskManagement/+page.svelte": {
+    "file": "entries/pages/(app)/riskManagement/_page.svelte.js",
+    "name": "entries/pages/(app)/riskManagement/_page.svelte",
+    "src": "src/routes/(app)/riskManagement/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_pencil.js",
+      "_trash-2.js",
+      "_Icon.js",
+      "_plus.js",
+      "_x.js"
+    ]
+  },
+  "src/routes/(app)/risks/+page.svelte": {
+    "file": "entries/pages/(app)/risks/_page.svelte.js",
+    "name": "entries/pages/(app)/risks/_page.svelte",
+    "src": "src/routes/(app)/risks/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/(app)/risks/riskAssessment/+page.svelte": {
+    "file": "entries/pages/(app)/risks/riskAssessment/_page.svelte.js",
+    "name": "entries/pages/(app)/risks/riskAssessment/_page.svelte",
+    "src": "src/routes/(app)/risks/riskAssessment/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_chevron-left.js"
+    ]
+  },
+  "src/routes/(app)/school-year/+page.svelte": {
+    "file": "entries/pages/(app)/school-year/_page.svelte.js",
+    "name": "entries/pages/(app)/school-year/_page.svelte",
+    "src": "src/routes/(app)/school-year/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_Icon.js",
+      "_search.js",
+      "_plus.js",
+      "_pencil.js",
+      "_trash-2.js"
+    ]
+  },
+  "src/routes/(app)/summary-report/+page.svelte": {
+    "file": "entries/pages/(app)/summary-report/_page.svelte.js",
+    "name": "entries/pages/(app)/summary-report/_page.svelte",
+    "src": "src/routes/(app)/summary-report/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_download.js",
+      "_search.js",
+      "_triangle-alert.js",
+      "_lightbulb.js"
+    ]
+  },
+  "src/routes/(app)/test-sidebar/+page.svelte": {
+    "file": "entries/pages/(app)/test-sidebar/_page.svelte.js",
+    "name": "entries/pages/(app)/test-sidebar/_page.svelte",
+    "src": "src/routes/(app)/test-sidebar/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_sheet-content.js",
+      "_Icon.js",
+      "_supabaseClient.js",
+      "_client.js",
+      "_index3.js"
+    ]
+  },
+  "src/routes/(app)/users/+page.svelte": {
+    "file": "entries/pages/(app)/users/_page.svelte.js",
+    "name": "entries/pages/(app)/users/_page.svelte",
+    "src": "src/routes/(app)/users/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_pencil.js",
+      "_trash-2.js",
+      "_Icon.js",
+      "_arrow-up-down.js",
+      "_search.js",
+      "_download.js",
+      "_x.js"
+    ],
+    "css": [
+      "_app/immutable/assets/tailwind.B5uCTvPp.css"
+    ]
+  },
+  "src/routes/+page.svelte": {
+    "file": "entries/pages/_page.svelte.js",
+    "name": "entries/pages/_page.svelte",
+    "src": "src/routes/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_supabaseClient.js",
+      "_eye.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.8h40zy5F.css",
+      "_app/immutable/assets/tailwind.B5uCTvPp.css"
+    ]
+  }
+}
