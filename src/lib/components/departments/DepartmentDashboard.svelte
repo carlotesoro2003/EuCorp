@@ -1,11 +1,11 @@
 <script lang="ts">
-	import DashboardCards from "$lib/components/admin-dashboard/DashboardCards.svelte";
-	import BarChart from "$lib/components/admin-dashboard/BarChart.svelte";
-	import RiskAnalysis from "$lib/components/admin-dashboard/RiskAnalysis.svelte";
+	import DashboardCards from "$lib/components/dept-dashboard/DashboardCards.svelte";
+	import BarChart from "$lib/components/dept-dashboard/BarChart.svelte";
+	import RiskAnalysis from "$lib/components/dept-dashboard/RiskAnalysis.svelte";
 	import RecentEvents from "$lib/components/admin-dashboard/RecentEvents.svelte";
-	import Header from "$lib/components/admin-dashboard/Header.svelte";
-	import OpportunitiesStatus from "../admin-dashboard/OpportunitiesStatus.svelte";
-	import { dashboardData } from "$lib/components/admin-dashboard/data";
+	import Header from "$lib/components/dept-dashboard/Header.svelte";
+	import OpportunitiesStatus from "../dept-dashboard/OpportunitiesStatus.svelte";
+	import { dashboardData } from "$lib/components/dept-dashboard/data";
 </script>
 
 

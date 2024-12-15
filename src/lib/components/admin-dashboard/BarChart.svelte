@@ -123,6 +123,8 @@
 							backgroundColor: "#e21d48",
 							borderColor: "#e21d48",
 							borderWidth: 1,
+							barThickness: paginatedData.goals.length === 1 ? 100 : undefined,
+							maxBarThickness: 100
 						},
 						{
 							label: "Not Achieved",
@@ -130,30 +132,35 @@
 							backgroundColor: "#e5e7eb",
 							borderColor: "#e5e7eb",
 							borderWidth: 1,
+							barThickness: paginatedData.goals.length === 1 ? 100 : undefined,
+							maxBarThickness: 100
 						},
 					],
 				},
 				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: {
-							position: "bottom",
-						},
-					},
-					scales: {
-						x: {
-							stacked: true,
-							ticks: {
-								autoSkip: false,
-							},
-						},
-						y: {
-							stacked: true,
-							beginAtZero: true,
-						},
-					},
-				},
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: "bottom",
+        },
+    },
+    scales: {
+        x: {
+            stacked: true,
+            ticks: {
+                autoSkip: false,
+            },
+        },
+        y: {
+            stacked: true,
+            beginAtZero: true,
+        },
+    },
+    // Control the bar thickness dynamically
+    barThickness: paginatedData.goals.length === 1 ? 40 : undefined, // Thin bar when 1 bar is shown
+    maxBarThickness: 40, // Prevent bars from being too wide
+},
 			});
 		}
 	};
