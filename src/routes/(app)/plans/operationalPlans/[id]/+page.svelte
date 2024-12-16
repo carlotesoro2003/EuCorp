@@ -5,6 +5,16 @@
 	import { onMount } from "svelte";
 	import PlanCard from "$lib/components/monitoring/departments/PlanComponent/PlanCard.svelte";
 
+	interface StrategicObjective {
+		name: string;
+		strategic_goal_id: number;
+	}
+
+	interface StrategicGoal {
+		name: string;
+		goal_no: number;
+	}
+
 	interface ActionPlan {
 		id?: number;
 		actions_taken: string;
@@ -21,12 +31,42 @@
 
 	let actionPlans: ActionPlan[] = [];
 	let newPlans: ActionPlan[] = [];
+	let strategicObjective: StrategicObjective | null = null;
+	let strategicGoal: StrategicGoal | null = null;
 	let profile: { id: string; department_id: string } | null = null;
 	let objective_id: number | null = null;
 	let isLoading = false;
 	let isSaving = false;
 	let successMessage: string | null = null;
 	let errorMessage: string | null = null;
+
+	/** Fetch strategic objective and goal */
+	const fetchStrategicObjectiveAndGoal = async (objective_id: number) => {
+		try {
+			const { data: objectiveData, error: objectiveError } = await supabase
+				.from("strategic_objectives")
+				.select("name, strategic_goal_id")
+				.eq("id", objective_id)
+				.single();
+
+			if (objectiveError || !objectiveData) throw new Error("Failed to fetch strategic objective.");
+
+			strategicObjective = objectiveData;
+
+			const { data: goalData, error: goalError } = await supabase
+				.from("strategic_goals")
+				.select("name, goal_no")
+				.eq("id", objectiveData.strategic_goal_id)
+				.single();
+
+			if (goalError || !goalData) throw new Error("Failed to fetch strategic goal.");
+
+			strategicGoal = goalData;
+		} catch (error) {
+			console.error("Error fetching strategic data:", error);
+			errorMessage = "Failed to fetch strategic details.";
+		}
+	};
 
 	/** Fetch existing action plans */
 	const fetchActionPlans = async () => {
@@ -119,21 +159,43 @@
 			let plan;
 			if (isNew) {
 				plan = newPlans[index];
-			} else {
+			} else {	
 				plan = actionPlans[index];
 			}
 
-			// Remove unnecessary fields
 			const { isEdited, isNew: _, ...sanitizedPlan } = plan;
 
-			// Save to the database
-			const { error } = await supabase
+			const { data, error } = await supabase
 				.from("action_plans")
-				.upsert(sanitizedPlan, { onConflict: "id" });
+				.upsert(sanitizedPlan, { onConflict: "id" })
+				.select();
 
 			if (error) throw error;
 
-			// Refresh data
+			if (data && data.length > 0) {
+			// Add saved plan to recent events
+			const savedPlan = data[0];
+			const { data: departmentData, error: departmentError } = await supabase
+				.from("departments")
+				.select("name")
+				.eq("id", savedPlan.department_id)
+				.single();
+
+			if (departmentError) {
+				console.error(`Error fetching department name for plan ${savedPlan.id}`);
+			} else {
+				const departmentName = departmentData?.name || "Unknown Department";
+
+				// Add to recent events
+				await supabase.from("recent_events").insert({
+					event_id: savedPlan.id,
+					event_type: "action_plan",
+					description: `${departmentName} created or updated an action plan`,
+				});
+			}
+		}
+
+
 			if (isNew) {
 				newPlans = newPlans.filter((_, i) => i !== index); // Remove from new plans
 				await fetchActionPlans();
@@ -178,6 +240,7 @@
 			}
 
 			profile = profileData;
+			await fetchStrategicObjectiveAndGoal(objective_id);
 			await fetchActionPlans();
 		} catch (error) {
 			console.error("Error during initialization:", error);
@@ -194,6 +257,25 @@
 	{#if errorMessage}
 		<div class="p-4 rounded-lg bg-red-100 text-red-800">{errorMessage}</div>
 	{/if}
+
+	<!-- Strategic Details -->
+	<div class="bg-card border border-border rounded-lg shadow p-6">
+		<h1 class="text-2xl font-bold">Strategic Planning Details</h1>
+		{#if strategicGoal && strategicObjective}
+			<div class="mt-4 space-y-2">
+				<h5 class="text-md font-medium">
+					Strategic Goal:
+					<span class="ml-2 text-muted-foreground">{strategicGoal.goal_no} - {strategicGoal.name}</span>
+				</h5>
+				<h5 class="text-md font-medium">
+					Strategic Objective:
+					<span class="ml-2 text-muted-foreground">{strategicObjective.name}</span>
+				</h5>
+			</div>
+		{:else}
+			<p class="text-muted-foreground">Loading strategic details...</p>
+		{/if}
+	</div>
 
 	<!-- Action Plans -->
 	<div class="bg-card rounded-lg shadow border border-border p-6">

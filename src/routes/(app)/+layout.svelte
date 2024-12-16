@@ -17,6 +17,7 @@
   import Moon from "lucide-svelte/icons/moon";
   import { toggleMode } from "mode-watcher";
   import { Button } from "$lib/components/ui/button/index.js";
+  import NotificationBell from "$lib/components/notifications/NotificationBell.svelte";
 
   $: currentPath = $page.url.pathname;
   let loading = true;
@@ -219,9 +220,8 @@ onMount(() => {
           />
           <span class="sr-only">Toggle theme</span>
         </Button>
-        <Button variant="outline" size="icon" onclick={() => alert('Notifications clicked! This feature is not yet available.')}>
-          <Bell class="h-[1.2rem] w-[1.2rem]" />
-          <span class="sr-only">Notifications</span>
+        <Button variant="outline" size="icon">
+          <NotificationBell />
         </Button>
       </div>
     </header>

@@ -157,11 +157,24 @@
 
 			if (sanitizedRisks.length > 0) {
 				// Save new or updated risks
-				const { error } = await supabase
+				const { data, error } = await supabase
 					.from("risks")
-					.upsert(sanitizedRisks, { onConflict: "rrn" });
+					.upsert(sanitizedRisks, { onConflict: "rrn" })
+					.select();
 
 				if (error) throw error;
+
+				if (data && data.length > 0) {
+					// Add to recent events
+					const events = data.map((risk) => ({
+						event_id: risk.id,
+						event_type: "risk",
+						description: `${departmentName} updated or added a new risk: "${risk.risk_statement}"`,
+						created_at: new Date().toISOString(),
+					}));
+
+					await supabase.from("recent_events").insert(events);
+				}
 
 				// Fetch the latest risks to refresh the list
 				const { data: updatedRisks, error: fetchError } = await supabase
@@ -190,6 +203,7 @@
 			isSaving = false;
 		}
 	};
+
 
 	/** Remove risk row */
 	const removeRow = async (index: number) => {
