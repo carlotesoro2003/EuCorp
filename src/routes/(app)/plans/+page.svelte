@@ -15,8 +15,10 @@
 		kpi: string;
 		lead_id: number | null;
 		school_year: number | null;
-		notApproved?: number; // Add this line
-		hasActionPlans?: boolean; // Add this line
+		notApproved?: number; 
+		notApprovedVP?: number; 
+		notApprovedPresident?: number; 
+		hasActionPlans?: boolean; 
 	};
 
 	type Lead = {
@@ -55,6 +57,7 @@
 	let leads: Lead[] = $state([]);
 	let schoolYears: SchoolYear[] = $state([]);
 	let currentSchoolYearId: number | null = null;
+	let userRole: string | null = null;
 
 	/** Initialize Data on Mount */
 	onMount(() => {
@@ -62,12 +65,38 @@
 	});
 
 	const init = async () => {
+		await fetchUserRole();
 		await fetchCurrentSchoolYear();
 		await fetchLeads();
 		await fetchSchoolYears();
 		await fetchStrategicGoals();
 		await fetchStrategicGoalsWithNotApprovedCounts();			
 		loading = false;
+	};
+
+	/**Fetch User Role**/
+	const fetchUserRole = async () => {
+		try {
+			// Get the current user session
+			const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+			if (sessionError || !sessionData.session) throw new Error("User session not found.");
+
+			const userId = sessionData.session.user.id;
+
+			// Fetch the user's role from the `profiles` table
+			const { data: profileData, error: profileError } = await supabase
+				.from("profiles")
+				.select("role")
+				.eq("id", userId)
+				.single();
+
+			if (profileError || !profileData) throw new Error("Failed to fetch user role.");
+
+			// Set the user role
+			userRole = profileData.role;
+		} catch (error) {
+			console.error("Error fetching user role:", error);
+		}
 	};
 
 	/** Fetch Current School Year */
@@ -119,7 +148,7 @@
 		}
 	};
 
-	/** Fetch Strategic Goals with Not Approved Counts */
+	/** Fetch Strategic Goals with Approval Counts */
 	const fetchStrategicGoalsWithNotApprovedCounts = async () => {
 		try {
 			const { data: result, error } = await supabase
@@ -134,33 +163,38 @@
 					school_year,
 					strategic_objectives (
 						action_plans (
-							is_approved
+							is_approved,
+							is_approved_vp,
+							is_approved_president
 						)
 					)
 				`)
 				.order("goal_no", { ascending: true });
 
 			if (error) {
-				displayAlert("Error fetching strategic goals", "error");
 				console.error("Error fetching strategic goals:", error);
 				return;
 			}
 
-			// Process goals and calculate not approved action plans or no action plans
+			// Process goals and calculate counts
 			strategicGoals = result.map((goal) => {
 				const objectives = goal.strategic_objectives || [];
 				const actionPlans = objectives.flatMap((objective) => objective.action_plans || []);
 
 				const notApproved = actionPlans.filter((plan) => plan.is_approved === false).length;
+				const notApprovedVP = actionPlans.filter((plan) => plan.is_approved_vp === false).length;
+				const notApprovedPresident = actionPlans.filter((plan) => plan.is_approved_president === false).length;
 
 				return {
 					...goal,
 					notApproved,
-					hasActionPlans: actionPlans.length > 0, // Check if there are any action plans
+					notApprovedVP,
+					notApprovedPresident,
+					hasActionPlans: actionPlans.length > 0,
 				};
 			});
 		} catch (error) {
-			console.error("Error processing not approved action plans data:", error);
+			console.error("Error processing action plans data:", error);
 		}
 	};
 
@@ -407,6 +441,7 @@
 						<th class="px-4 py-3 text-left">Objectives</th>
 						<th class="px-4 py-3 text-center">Plan Status</th>
 						<th class="px-4 py-3 text-center">Actions</th>
+						
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-border">
@@ -435,13 +470,29 @@
 									>
 										N/A
 									</span>
-								{:else if (goal.notApproved ?? 0) > 0}
+								{:else if userRole === "admin" && (goal.notApproved ?? 0) > 0}
 									<span
 										class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-red-100 text-red-700 rounded-lg"
-										title="{goal.notApproved} Action Plans Not Approved"
+										title="{goal.notApproved} Action Plans Not Approved by Admin"
 									>
 										<Target size={16} />
 										{goal.notApproved}
+									</span>
+								{:else if userRole === "vice_president" && (goal.notApprovedVP ?? 0) > 0}
+									<span
+										class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-orange-100 text-orange-700 rounded-lg"
+										title="{goal.notApprovedVP} Action Plans Not Approved by Vice President"
+									>
+										<Target size={16} />
+										{goal.notApprovedVP}
+									</span>
+								{:else if userRole === "president" && (goal.notApprovedPresident ?? 0) > 0}
+									<span
+										class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-yellow-100 text-yellow-700 rounded-lg"
+										title="{goal.notApprovedPresident} Action Plans Not Approved by President"
+									>
+										<Target size={16} />
+										{goal.notApprovedPresident}
 									</span>
 								{:else}
 									<span
@@ -452,6 +503,8 @@
 									</span>
 								{/if}
 							</td>
+							
+						
 							<td class="px-4 py-3">
 								<div class="flex justify-center gap-2 items-center">
 									<!-- Action Buttons -->

@@ -22,7 +22,10 @@
 		strategic_goal_id: number;
 		profile_id: string;
 		hasActionPlans?: boolean;
-		notApproved?: number;
+		notApprovedAdmin?: number;
+		notApprovedVP?: number;
+		notApprovedPresident?: number;
+
 	}
 
 	interface StrategicGoal {
@@ -48,6 +51,32 @@
 	let adminName: string | null = $state(null);
 	let vicePresidentName: string | null = $state(null);
 	let presidentName: string | null = $state(null);
+	let userRole: string | null = $state(null);
+
+	/**Fetch User Role**/
+	const fetchUserRole = async () => {
+		try {
+			// Get the current user session
+			const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+			if (sessionError || !sessionData.session) throw new Error("User session not found.");
+
+			const userId = sessionData.session.user.id;
+
+			// Fetch the user's role from the `profiles` table
+			const { data: profileData, error: profileError } = await supabase
+				.from("profiles")
+				.select("role")
+				.eq("id", userId)
+				.single();
+
+			if (profileError || !profileData) throw new Error("Failed to fetch user role.");
+
+			// Set the user role
+			userRole = profileData.role;
+		} catch (error) {
+			console.error("Error fetching user role:", error);
+		}
+	};
 
 	/** Derived values */
 	const filteredObjectives = $derived(
@@ -197,7 +226,9 @@
 					target,
 					eval_measures,
 					action_plans (
-						is_approved
+						is_approved,
+						is_approved_vp,
+						is_approved_president
 					)
 				`)
 				.eq("strategic_goal_id", goalId);
@@ -208,14 +239,19 @@
 
 			objectives = (objectiveData || []).map((objective) => {
 				const actionPlans = objective.action_plans || [];
-				const notApproved = actionPlans.filter((plan) => plan.is_approved === false).length;
+
+				// Calculate counts for not approved by each role
+				const notApprovedAdmin = actionPlans.filter((plan) => plan.is_approved === false).length;
+				const notApprovedVP = actionPlans.filter((plan) => plan.is_approved_vp === false).length;
+				const notApprovedPresident = actionPlans.filter((plan) => plan.is_approved_president === false).length;
 				const hasActionPlans = actionPlans.length > 0;
 
 				return {
 					...objective,
-					notApproved,
+					notApprovedAdmin,
+					notApprovedVP,
+					notApprovedPresident,
 					hasActionPlans,
-					allApproved: hasActionPlans && notApproved === 0,
 				};
 			});
 		} catch (error) {
@@ -300,6 +336,7 @@ const handleDelete = async (objective: StrategicObjective) => {
 	/** Initialize data */
 	onMount(() => {
 		goalId = $page.params.id ? parseInt($page.params.id) : null;
+		fetchUserRole();
 		fetchGoalDetails();
 		fetchAdminName();
 		fetchVPAndPresidentNames();
@@ -403,23 +440,48 @@ const handleDelete = async (objective: StrategicObjective) => {
 										<button onclick={() => handleObjectiveClick(objective.id)} class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-primary bg-primary/10 hover:bg-primary/20 rounded-md" title="View plans">
 											<Eye size={18} /> View
 										</button>
+									<td class="px-4 py-3 text-center">
+											{#if !objective.hasActionPlans}
+												<span
+													class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg"
+													title="No Action Plans"
+												>
+													N/A
+												</span>
+											{:else if userRole === "admin" && (objective.notApprovedAdmin ?? 0) > 0}
+												<span
+													class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-red-100 text-red-700 rounded-lg"
+													title="{objective.notApprovedAdmin} Action Plans Not Approved by Admin"
+												>
+													<Target size={16} />
+													{objective.notApprovedAdmin}
+												</span>
+											{:else if userRole === "vice_president" && (objective.notApprovedVP ?? 0) > 0}
+												<span
+													class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-orange-100 text-orange-700 rounded-lg"
+													title="{objective.notApprovedVP} Action Plans Not Approved by Vice President"
+												>
+													<Target size={16} />
+													{objective.notApprovedVP}
+												</span>
+											{:else if userRole === "president" && (objective.notApprovedPresident ?? 0) > 0}
+												<span
+													class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-yellow-100 text-yellow-700 rounded-lg"
+													title="{objective.notApprovedPresident} Action Plans Not Approved by President"
+												>
+													<Target size={16} />
+													{objective.notApprovedPresident}
+												</span>
+											{:else}
+												<span
+													class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-lg"
+													title="All Action Plans Approved"
+												>
+													<Check size={16} />
+												</span>
+											{/if}
 									</td>
-										<td class="px-4 py-3 text-center">
-										{#if !objective.hasActionPlans}
-											<span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg" title="No plans added">
-												N/A
-											</span>
-										{:else if (objective.notApproved > 0)}
-											<span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-red-100 text-red-700 rounded-lg" title="{objective.notApproved} plans not approved">
-												<Target size={16} />
-												{objective.notApproved} 
-											</span>
-										{:else}
-											<span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-lg" title="All plans approved">
-												<Check size={16} />
-											</span>
-										{/if}
-									</td>
+							
 									<td class="px-4 py-3">
 										<div class="flex justify-center gap-2">
 											<button onclick={() => (editingObjective = objective)} class="hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground">

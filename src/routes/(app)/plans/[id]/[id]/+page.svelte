@@ -646,10 +646,6 @@ const onEditRow = (plan: ActionPlan) => {
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     
     <div class="flex items-center gap-2">
-        <a href={`/plans/${objective?.id}`} class="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-        <ChevronLeft size={20} />
-        Back to Strategic Objectives
-      </a>
       <h1 class="text-2xl font-bold">Action Plans</h1>
     </div>
   </div>
