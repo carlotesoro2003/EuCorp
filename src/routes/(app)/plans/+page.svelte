@@ -447,13 +447,13 @@
 				<tbody class="divide-y divide-border">
 					{#each paginatedItems as goal (goal.id)}
 						<tr class="hover:bg-muted/50">
-							<td class="px-4 py-3">{goal.goal_no}</td>
-							<td class="px-4 py-3">{goal.name}</td>
-							<td class="px-4 py-3 hidden md:table-cell">{goal.description}</td>
-							<td class="px-4 py-3 hidden lg:table-cell">{goal.kpi}</td>
-							<td class="px-4 py-3">{getLeadNameById(goal.lead_id)}</td>
-							<td class="px-4 py-3">{getSchoolYearById(goal.school_year)}</td>
-							<td class="px-4 py-3">
+							<td class="px-4 py-3 align-top">{goal.goal_no}</td>
+							<td class="px-4 py-3 align-top">{goal.name}</td>
+							<td class="px-4 py-3 hidden md:table-cell align-top">{goal.description}</td>
+							<td class="px-4 py-3 hidden lg:table-cell align-top">{goal.kpi}</td>
+							<td class="px-4 py-3 align-top">{getLeadNameById(goal.lead_id)}</td>
+							<td class="px-4 py-3 align-top">{getSchoolYearById(goal.school_year)}</td>
+							<td class="px-4 py-3 align-top">
 								<button
 									onclick={() => goto(`/plans/${goal.id}`)}
 									class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-primary bg-primary/10 hover:bg-primary/20 rounded-md"
@@ -462,7 +462,7 @@
 									<Eye size={16} /> View
 								</button>
 							</td>
-							<td class="px-4 py-3 text-center">
+							<td class="px-4 py-3 text-center align-top">
 								{#if !goal.hasActionPlans}
 									<span
 										class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg"
@@ -505,7 +505,7 @@
 							</td>
 							
 						
-							<td class="px-4 py-3">
+							<td class="px-4 py-3 align-top">
 								<div class="flex justify-center gap-2 items-center">
 									<!-- Action Buttons -->
 									<button

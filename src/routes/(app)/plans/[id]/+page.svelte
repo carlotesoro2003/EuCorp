@@ -435,17 +435,17 @@ const handleDelete = async (objective: StrategicObjective) => {
 						<tbody class="divide-y divide-border">
 							{#each paginatedObjectives as objective}
 								<tr class="hover:bg-muted/50">
-									<td class="px-4 py-3">{objective.name}</td>
-									<td class="px-4 py-3">{objective.strategic_initiatives}</td>
-									<td class="px-4 py-3">{objective.kpi}</td>
-									<td class="px-4 py-3">{objective.persons_involved}</td>
-									<td class="px-4 py-3">{objective.target}</td>
-									<td class="px-4 py-3">{objective.eval_measures}</td>
-									<td class="px-4 py-3">
+									<td class="px-4 py-3 align-top">{objective.name}</td>
+									<td class="px-4 py-3 align-top">{objective.strategic_initiatives}</td>
+									<td class="px-4 py-3 align-top">{objective.kpi}</td>
+									<td class="px-4 py-3 align-top">{objective.persons_involved}</td>
+									<td class="px-4 py-3 align-top">{objective.target}</td>
+									<td class="px-4 py-3 align-top">{objective.eval_measures}</td>
+									<td class="px-4 py-3 align-top">
 										<button onclick={() => handleObjectiveClick(objective.id)} class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-primary bg-primary/10 hover:bg-primary/20 rounded-md" title="View plans">
 											<Eye size={18} /> View
 										</button>
-									<td class="px-4 py-3 text-center">
+									<td class="px-4 py-3 text-center align-top">
 											{#if !objective.hasActionPlans}
 												<span
 													class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg"
@@ -487,7 +487,7 @@ const handleDelete = async (objective: StrategicObjective) => {
 											{/if}
 									</td>
 							
-									<td class="px-4 py-3">
+									<td class="px-4 py-3 align-top">
 										<div class="flex justify-center gap-2">
 											<button onclick={() => (editingObjective = objective)} class="hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground">
 												<Pencil size={18} />
