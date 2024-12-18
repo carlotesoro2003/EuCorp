@@ -533,6 +533,52 @@
 				
 			</table>
 		</div>
+		<!-- Add this right after the table, before the pagination controls -->
+<div class="mt-4 p-4 bg-card rounded-lg shadow border border-border">
+    <h3 class="text-sm font-semibold mb-2">Plan Status Legends:</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg">
+                N/A
+            </span>
+            <span class="text-sm text-muted-foreground">No Action Plans</span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-lg">
+                <Check size={16} />
+            </span>
+            <span class="text-sm text-muted-foreground">All Plans Approved</span>
+        </div>
+
+        {#if userRole === "admin"}
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-red-100 text-red-700 rounded-lg">
+                    <Target size={16} /> 1
+                </span>
+                <span class="text-sm text-muted-foreground">Plans Pending Admin Approval</span>
+            </div>
+        {/if}
+
+        {#if userRole === "vice_president"}
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-orange-100 text-orange-700 rounded-lg">
+                    <Target size={16} /> 1
+                </span>
+                <span class="text-sm text-muted-foreground">Plans Pending VP Approval</span>
+            </div>
+        {/if}
+
+        {#if userRole === "president"}
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-yellow-100 text-yellow-700 rounded-lg">
+                    <Target size={16} /> 1
+                </span>
+                <span class="text-sm text-muted-foreground">Plans Pending President Approval</span>
+            </div>
+        {/if}
+    </div>
+</div>
 
 		<div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
 			<div class="text-sm text-muted-foreground">
