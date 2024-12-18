@@ -316,17 +316,17 @@
 					<tbody class="divide-y divide-border">
 						{#each sortedAndPaginatedGoals as goal}
 							<tr class="hover:bg-muted/50">
-								<td class="px-4 py-3">{goal.statement}</td>
-								<td class="px-4 py-3">{goal.kpi}</td>
-								<td class="px-4 py-3">{goal.goal}</td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">{goal.statement}</td>
+								<td class="px-4 py-3 align-top">{goal.kpi}</td>
+								<td class="px-4 py-3 align-top">{goal.goal}</td>
+								<td class="px-4 py-3 align-top">
 									{#if goal.achieved === "Achieved"}
 										{goal.evaluation || "No evaluation"}
 									{:else}
 										<button onclick={() => openEvaluationModal(goal)} class="shrink-0 inline-flex items-center px-3 py-1 text-sm bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">Evaluate</button>
 									{/if}
 								</td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">
 									<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium {goal.achieved === 'Achieved' ? 'bg-green-100 text-green-800' : goal.achieved === 'Not Achieved' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
 										{#if goal.isLoading}
 											<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
@@ -347,7 +347,7 @@
 										</div>
 									{/if}
 								</td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">
 									<div class="flex items-center justify-center">
 										{#if goal.aiStatement}
 											<button onclick={() => openDialog(goal.aiStatement || "")} class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-primary bg-primary/10 hover:bg-primary/20 rounded-md">

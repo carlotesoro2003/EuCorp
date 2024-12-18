@@ -579,18 +579,18 @@
 				<tbody class="divide-y divide-border">
 					{#each paginatedPlans as plan}
 						<tr class="hover:bg-muted/50">
-							<td class="px-4 py-3">{plan.department}</td>
-							<td class="px-4 py-3">{plan.actions_taken}</td>
-							<td class="px-4 py-3">{plan.kpi}</td>
-							<td class="px-4 py-3">{plan.target_output}</td>
-							<td class="px-4 py-3">{plan.evaluation || "Pending"}</td>
-							<td class="px-4 py-3">{plan.statement || "Pending"}</td>
-							<td class="px-4 py-3">
+							<td class="px-4 py-3 align-top">{plan.department}</td>
+							<td class="px-4 py-3 align-top">{plan.actions_taken}</td>
+							<td class="px-4 py-3 align-top">{plan.kpi}</td>
+							<td class="px-4 py-3 align-top">{plan.target_output}</td>
+							<td class="px-4 py-3 align-top">{plan.evaluation || "Pending"}</td>
+							<td class="px-4 py-3 align-top">{plan.statement || "Pending"}</td>
+							<td class="px-4 py-3 align-top">
 								<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {plan.is_accomplished ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
 									{plan.is_accomplished ? "Achieved" : "Not Achieved"}
 								</span>
 							</td>
-							<td class="px-4 py-3 text-muted-foreground">
+							<td class="px-4 py-3 text-muted-foreground align-top">
 								{plan.time_completed ? new Date(plan.time_completed).toLocaleString() : "N/A"}
 							</td>
 						</tr>

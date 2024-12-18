@@ -337,17 +337,17 @@
 					<tbody class="divide-y divide-border">
 						{#each paginatedOpportunities as opportunity}
 							<tr class="hover:bg-muted/50">
-								<td class="px-4 py-3">{opportunity.opt_statement}</td>
-								<td class="px-4 py-3">{opportunity.kpi}</td>
-								<td class="px-4 py-3">{opportunity.planned_actions}</td>
-								<td class="px-4 py-3">{opportunity.evaluation || "Pending"}</td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">{opportunity.opt_statement}</td>
+								<td class="px-4 py-3 align-top">{opportunity.kpi}</td>
+								<td class="px-4 py-3 align-top">{opportunity.planned_actions}</td>
+								<td class="px-4 py-3 align-top">{opportunity.evaluation || "Pending"}</td>
+								<td class="px-4 py-3 align-top">
 									<span class="inline-flex px-2 py-1 rounded-full text-xs font-medium {opportunity.achieved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
 										{opportunity.achieved ? "Achieved" : "Not Achieved"}
 									</span>
 								</td>
-								<td class="px-4 py-3">{opportunity.statement}</td>
-								<td class="px-4 py-3">{opportunity.time_completed ? new Date(opportunity.time_completed).toLocaleString() : "N/A"}</td>
+								<td class="px-4 py-3 align-top">{opportunity.statement}</td>
+								<td class="px-4 py-3 align-top">{opportunity.time_completed ? new Date(opportunity.time_completed).toLocaleString() : "N/A"}</td>
 							</tr>
 						{/each}
 					</tbody>

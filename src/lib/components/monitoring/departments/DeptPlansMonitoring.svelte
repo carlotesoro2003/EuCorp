@@ -317,16 +317,16 @@
 					<tbody class="divide-y divide-border">
 						{#each sortedAndPaginatedPlans as plan}
 							<tr class="hover:bg-muted/50">
-								<td class="px-4 py-3">{plan.strategic_goal_name}</td>
-								<td class="px-4 py-3">{plan.objective_name}</td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">{plan.strategic_goal_name}</td>
+								<td class="px-4 py-3 align-top">{plan.objective_name}</td>
+								<td class="px-4 py-3 align-top">
 									<div class="flex items-center gap-2">
 										<p>{plan.actions_taken}</p>
 									</div>
 								</td>
-								<td class="px-4 py-3">{plan.kpi}</td>
-								<td class="px-4 py-3">{plan.target_output}</td>
-                                <td class="px-4 py-3"> 
+								<td class="px-4 py-3 align-top">{plan.kpi}</td>
+								<td class="px-4 py-3 align-top">{plan.target_output}</td>
+                                <td class="px-4 py-3 align-top"> 
                                     {#if plan.isLoading}
 											<Loader2 class="animate-spin h-5 w-5 text-primary ml-2" />
 										{:else if plan.is_accomplished}
@@ -335,7 +335,7 @@
 											<button onclick={() => openEvaluationModal(plan)} class="shrink-0 inline-flex items-center px-3 py-1 text-sm bg-primary text-primary-foreground hover:bg-primary/90 rounded-md">Evaluate</button>
 										{/if}
                                 </td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">
 									<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium {plan.is_accomplished ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
 										{#if plan.is_accomplished}
 											<CheckCircle size={14} />
@@ -346,7 +346,7 @@
 										{/if}
 									</span>
 								</td>
-								<td class="px-4 py-3">
+								<td class="px-4 py-3 align-top">
 									<div class="flex items-center justify-center">
 										{#if plan.statement}
 											<button onclick={() => openDialog(plan.statement || "")} class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-primary bg-primary/10 hover:bg-primary/20 rounded-md">
