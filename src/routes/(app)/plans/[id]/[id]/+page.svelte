@@ -439,7 +439,12 @@
     doc.text("President(s)", 260, signatureStartY + 5);
 
 
-    doc.save("ActionPlans.pdf");
+    const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
   };
 
   const filteredAndSortedPlans = $derived(

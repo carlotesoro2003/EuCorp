@@ -290,8 +290,12 @@
 				headStyles: { fillColor: [41, 128, 185] },
 			});
 
-			doc.save("PlanMonitoring.pdf");
-			displayAlert("PDF exported successfully", "success");
+			const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 		} catch (error) {
 			displayAlert("Error exporting PDF", "error");
 		}
@@ -327,7 +331,12 @@
 			doc.setFontSize(12);
 			doc.text(summaryLines, 14, 35);
 
-			doc.save("PlanMonitoringSummary.pdf");
+			const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 			displayAlert("Summary report generated successfully", "success");
 		} catch (error) {
 			displayAlert("Error generating summary report", "error");

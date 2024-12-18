@@ -565,10 +565,12 @@
       doc.setFontSize(8);
       doc.text(`Exported on: ${exportDate} | Total Records: ${totalExported} | Total Budget: P${totalBudget}`, 14, doc.internal.pageSize.height - 10);
 
-      doc.save("Risk_Report.pdf");
-
-    // Save the PDF file
-    doc.save("Risk_Report.pdf");
+      const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
   };
 
 

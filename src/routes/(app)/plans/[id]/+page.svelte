@@ -306,7 +306,12 @@
 		doc.text("_________________________", 180, signatureStartY);
 		doc.text("President", 180, signatureStartY + 5);
 
-		doc.save("StrategicObjectives.pdf");
+		const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 	};
 	// Add state for delete loading
 let isDeleting = $state(false);

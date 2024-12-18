@@ -262,7 +262,12 @@
 		doc.text("President", positions[3], signatureStartY + 5);
 
 		// Save the PDF file
-		doc.save("Opportunities_Report.pdf");
+		const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 	};
 
 	/** Delete opportunity */

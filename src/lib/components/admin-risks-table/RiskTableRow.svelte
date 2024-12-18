@@ -5,15 +5,15 @@
 </script>
 
 <tr class="hover:bg-muted/50">
-	<td class="px-4 py-3">{risk.rrn}</td>
-	<td class="px-4 py-3">{risk.risk_statement}</td>
-	<td class="px-4 py-3">
+	<td class="px-4 py-3 align-top">{risk.rrn}</td>
+	<td class="px-4 py-3 align-top">{risk.risk_statement}</td>
+	<td class="px-4 py-3 align-top">
 		{classification.find((cls) => cls.id === risk.classification)?.name || "N/A"}
 	</td>
-	<td class="px-4 py-3">{risk.actions}</td>
-	<td class="px-4 py-3">{risk.key_persons}</td>
-	<td class="px-4 py-3">P{risk.budget.toFixed(2)}</td>
-	<td class="px-4 py-3">
+	<td class="px-4 py-3 align-top">{risk.actions}</td>
+	<td class="px-4 py-3 align-top">{risk.key_persons}</td>
+	<td class="px-4 py-3 align-top">P{risk.budget.toFixed(2)}</td>
+	<td class="px-4 py-3 align-top">
 		{#each riskAssessments.filter((a) => a.risk_id === risk.id) as assessment}
 			<div class="space-y-1">
 				<div>
@@ -35,7 +35,7 @@
 			</div>
 		{/each}
 	</td>
-	<td class="px-4 py-3">
+	<td class="px-4 py-3 align-top">
 		<div class="flex items-center gap-2">
 			<button onclick={() => onApprove(risk.id)} disabled={approvingId === risk.id || (userRole === "admin" && risk.is_approved) || (userRole === "vice_president" && (!risk.is_approved || risk.is_approved_vp)) || (userRole === "president" && (!risk.is_approved_vp || risk.is_approved_president))} class="px-2 py-1 rounded bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 text-sm">
 				{approvingId === risk.id ? "Processing..." : userRole === "admin" ? (risk.is_approved ? "Admin Approved" : "Approve") : userRole === "vice_president" ? (risk.is_approved_vp ? "VP Approved" : "Approve") : userRole === "president" ? (risk.is_approved_president ? "President Approved" : "Approve") : "Approve"}

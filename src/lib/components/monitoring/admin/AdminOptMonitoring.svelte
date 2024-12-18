@@ -154,7 +154,12 @@
 			startY: 30,
 		});
 
-		doc.save("opportunities.pdf");
+		const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 	};
 
 	/** Generate PDF report */
@@ -190,7 +195,12 @@
 			doc.setFontSize(12);
 			doc.text(summaryLines, 14, 35);
 
-			doc.save("OpportunitiesSummary.pdf");
+			const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 		} catch (error) {
 			console.error("Error generating summary report:", error);
 			alert("An error occurred while generating the summary report.");

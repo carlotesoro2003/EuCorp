@@ -193,7 +193,12 @@
 			});
 		}
 
-		doc.save("RiskMonitoringSummary.pdf");
+		const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 	};
 	const getSeverityBadgeColor = (severity: string | null) => {
     if (!severity) return "bg-gray-100 text-gray-800";

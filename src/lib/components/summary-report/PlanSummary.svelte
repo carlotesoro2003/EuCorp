@@ -212,7 +212,12 @@
 			yPosition += 10;
 		});
 
-		doc.save("Strategic_Plans_Report.pdf");
+		const pdfBlob = doc.output('blob');
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+        
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 	};
 
 	// Fetch data on mount
