@@ -321,6 +321,24 @@ const totalPages = $derived(Math.ceil(filteredItems.length / itemsPerPage));
 
 
 
+const getSeverityBadgeColor = (severity: string | null) => {
+    if (!severity) return "bg-gray-100 text-gray-800";
+    
+    switch (severity.toLowerCase()) {
+        case 'catastrophic':
+            return "bg-red-100 text-red-800";
+        case 'major':
+            return "bg-orange-100 text-orange-800";
+        case 'moderate':
+            return "bg-yellow-100 text-yellow-800";
+        case 'minor':
+            return "bg-blue-100 text-blue-800";
+        case 'insignificant':
+            return "bg-green-100 text-green-800";
+        default:
+            return "bg-gray-100 text-gray-800";
+    }
+};
 
 
 
@@ -417,12 +435,10 @@ const totalPages = $derived(Math.ceil(filteredItems.length / itemsPerPage));
 						<td class="px-4 py-3">{risk.rrn}</td>
 						<td class="px-4 py-3">{risk.risk_statement}</td>
 						<td class="px-4 py-3">{risk.likelihood_rating}</td>
-						<td class="px-4 py-3">{risk.severity}</td>
-						<td class="px-4 py-3">
-							<span class={`px-2 py-1 rounded-full text-xs font-medium ${getControlRatingBadgeColor(risk.control_rating)}`}>
-								{risk.control_rating || "N/A"}
-							</span>
-						</td>
+						<td class="px-4 py-3"><span class={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityBadgeColor(risk.severity)}`}>
+                            {risk.severity || "N/A"}
+                        </span></td>
+						<td class="px-4 py-3">{risk.control_rating || "N/A"}</td>
 						<td class="px-4 py-3">{risk.monitoring_rating}</td>
 						<td class="px-4 py-3">
 							<div class="flex justify-center gap-2">
@@ -436,6 +452,8 @@ const totalPages = $derived(Math.ceil(filteredItems.length / itemsPerPage));
 			</tbody>
 		</table>
 	</div>
+
+	
 
 	<div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
 		<div class="text-sm text-muted-foreground">

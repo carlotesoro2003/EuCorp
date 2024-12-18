@@ -195,6 +195,41 @@
 
 		doc.save("RiskMonitoringSummary.pdf");
 	};
+	const getSeverityBadgeColor = (severity: string | null) => {
+    if (!severity) return "bg-gray-100 text-gray-800";
+    
+    switch (severity.toLowerCase()) {
+        case 'catastrophic':
+            return "bg-red-100 text-red-800";
+        case 'major':
+            return "bg-orange-100 text-orange-800";
+        case 'moderate':
+            return "bg-yellow-100 text-yellow-800";
+        case 'minor':
+            return "bg-blue-100 text-blue-800";
+        case 'insignificant':
+            return "bg-green-100 text-green-800";
+        default:
+            return "bg-gray-100 text-gray-800";
+    }
+};
+const getStatusBadgeColor = (status: string | null) => {
+    if (!status) return "bg-gray-100 text-gray-800";
+    
+    switch (status.toLowerCase()) {
+        case 'mitigated':
+            return "bg-green-100 text-green-800";
+        case 'still mitigating':
+            return "bg-yellow-100 text-yellow-800";
+        case 'not mitigated':
+            return "bg-red-100 text-red-800";
+        case 'for review':
+            return "bg-blue-100 text-blue-800";
+        default:
+            return "bg-gray-100 text-gray-800";
+    }
+};
+
 
 	// Fetch data on mount
 	fetchRiskMonitoringData();
@@ -254,7 +289,11 @@
 							</div>
 							<div class="p-3 rounded">
 								<span class="text-sm font-medium">Severity:</span>
-								<p class="mt-1">{risk.severity}</p>
+								<p class="mt-1">
+									<span class={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityBadgeColor(risk.severity)}`}>
+										{risk.severity || "N/A"}
+									</span>
+								</p>
 							</div>
 							<div class="p-3 rounded">
 								<span class="text-sm font-medium">Control:</span>
@@ -266,12 +305,16 @@
 							<h5 class="text-sm font-medium  mb-3">Monitoring Details</h5>
 							<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 								<div>
-									<span class="text-sm">Monitoring Rating</span>
+									<span class="text-sm font-medium">Monitoring Rating</span>
 									<p class="mt-1">{risk.monitoring_rating}</p>
 								</div>
 								<div>
-									<span class="text-sm">Status</span>
-									<p class="mt-1">{risk.status}</p>
+									<span class="text-sm font-medium">Status</span>
+									<p class="mt-1">
+										<span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(risk.status)}`}>
+											{risk.status || "N/A"}
+										</span>
+									</p>
 								</div>
 							</div>
 						</div>
