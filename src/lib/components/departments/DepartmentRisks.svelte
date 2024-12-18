@@ -35,11 +35,39 @@
 	let successMessage: string | null = $state(null);
 	let errorMessage: string | null = $state(null);
 	let nextRrnNumber: number = $state(1);
+	let currentYear: number | null = $state(null);
+
+/** Function to fetch current school year */
+const fetchCurrentSchoolYear = async () => {
+    try {
+        const today = new Date().toISOString().split("T")[0];
+        const { data, error } = await supabase
+            .from("school_years")
+            .select("school_year")
+            .lte("start_date", today)
+            .gte("end_date", today)
+            .maybeSingle();
+
+        if (error) throw error;
+        
+        if (data) {
+            // Extract first year from school_year string (e.g., "2024-2025" -> "2024")
+            currentYear = parseInt(data.school_year.split("-")[0]);
+        } else {
+            // Fallback to current year
+            currentYear = new Date().getFullYear();
+        }
+    } catch (error) {
+        console.error("Error fetching current school year:", error);
+        currentYear = new Date().getFullYear();
+    }
+};
 
 	/** Function to fetch profile,risks,classification */
 	const fetchAllData = async () => {
 		try {
 			await fetchUserProfile();
+			await fetchCurrentSchoolYear();
 			await fetchRisks();
 			await fetchNextRrnNumber();
 			await fetchClassification();
@@ -100,43 +128,50 @@
 
 	/** Function to fetch next RRN number */
 	const fetchNextRrnNumber = async () => {
-		try {
-			const { data, error } = await supabase.from("risks").select("rrn").eq("profile_id", profile?.id).order("rrn", { ascending: false }).limit(1);
+    try {
+        const { data, error } = await supabase
+            .from("risks")
+            .select("rrn")
+            .eq("profile_id", profile?.id)
+            .ilike("rrn", `%${currentYear}`)
+            .order("rrn", { ascending: false })
+            .limit(1);
 
-			if (error) throw error;
+        if (error) throw error;
 
-			if (data.length > 0) {
-				const lastRrn = data[0].rrn;
-				const lastNumberMatch = lastRrn.match(/(\d+)$/);
-				nextRrnNumber = lastNumberMatch ? parseInt(lastNumberMatch[0], 10) + 1 : 1;
-			} else {
-				nextRrnNumber = 1;
-			}
-		} catch (error) {
-			console.error("Error fetching next RRN number:", error);
-			errorMessage = "Failed to determine the next RRN number.";
-		}
-	};
+        if (data.length > 0) {
+            const lastRrn = data[0].rrn;
+            const lastNumberMatch = lastRrn.match(/(\d{3})-\d{4}$/);
+            nextRrnNumber = lastNumberMatch ? parseInt(lastNumberMatch[1], 10) + 1 : 1;
+        } else {
+            nextRrnNumber = 1;
+        }
+    } catch (error) {
+        console.error("Error fetching next RRN number:", error);
+        errorMessage = "Failed to determine the next RRN number.";
+    }
+};
 
 	/** Add New Risk Row */
 	const addRow = () => {
-		const formattedRrn = `RRN-${departmentName}-${String(nextRrnNumber).padStart(3, "0")}`;
-		nextRrnNumber++;
-		risks = [
-			...risks,
-			{
-				rrn: formattedRrn,
-				risk_statement: "",
-				classification: null,
-				actions: "",
-				key_persons: "",
-				budget: 0,
-				profile_id: profile?.id || "",
-				department_id: profile?.department_id || "",
-				isNew: true, // Mark as new
-			},
-		];
-	};
+    const formattedRrn = `RRN-${departmentName}-${String(nextRrnNumber).padStart(3, "0")}-${currentYear}`;
+    nextRrnNumber++;
+    risks = [
+        ...risks,
+        {
+            rrn: formattedRrn,
+            risk_statement: "",
+            classification: null,
+            actions: "",
+            key_persons: "",
+            budget: 0,
+            profile_id: profile?.id || "",
+            department_id: profile?.department_id || "",
+            isNew: true,
+        },
+    ];
+};
+
 
 	/** Mark Edited Risk */
 	const markRiskAsEdited = (index: number) => {
