@@ -16,20 +16,18 @@ export const POST = async ({ request }) => {
       );
     }
 
-    const messages = [
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       {
-        role: "user",
+        role: "user" as const,
         content: `The target is: "${target}". Based on the following evaluation: "${evaluation}", analyze whether the goal has been achieved. Your explanation must:
-1. Ensure all provided data is evaluated strictly against the target criteria, avoiding assumptions or misinterpretations.
-2. Verify that each element of the target (quantitative and qualitative) is addressed explicitly, and confirm whether the data satisfies, exceeds, or falls short of the requirements.
-3. Highlight any inconsistencies, missing details, or misalignments between the evaluation, the data, and the target criteria.
-4. Avoid introducing unrelated information or interpretations beyond what is provided in the target or data.
-5. Be meticulous with typographical errors, grammar, and punctuation.
-6. make it brief and direct to the point.
-7. If the quantitative value exceeds the target, consider it as achieved. If it falls short, consider it as not achieved. If it is equal, consider it as achieved. 
-
-
-Respond in a concise, logical paragraph that directly analyzes the data and evaluation. Do not use phrases such as "yes" or "no" to start the explanation. Avoid structured formats like bullet points, and focus solely on the provided details to ensure clarity and accuracy.`,
+    1. Ensure all provided data is evaluated strictly against the target criteria, avoiding assumptions or misinterpretations.
+    2. Verify that each element of the target (quantitative and qualitative) is addressed explicitly, and confirm whether the data satisfies, exceeds, or falls short of the requirements.
+    3. Highlight any inconsistencies, missing details, or misalignments between the evaluation, the data, and the target criteria.
+    4. Avoid introducing unrelated information or interpretations beyond what is provided in the target or data.
+    5. Be meticulous with typographical errors, grammar, and punctuation.
+    6. make it brief and direct to the point.
+    7. If the quantitative value exceeds the target, consider it as achieved. If it falls short, consider it as not achieved. If it is equal, consider it as achieved. 
+    Respond in a concise, logical paragraph that directly analyzes the data and evaluation. Do not use phrases such as "yes" or "no" to start the explanation. Avoid structured formats like bullet points, and focus solely on the provided details to ensure clarity and accuracy.`,
       },
     ];
 
@@ -56,7 +54,7 @@ Respond in a concise, logical paragraph that directly analyzes the data and eval
   } catch (error) {
     console.error("Error during chat session:", error);
     return json(
-      { error: "Internal Server Error", details: error.message },
+      { error: "Internal Server Error", details: error instanceof Error ? error.message : 'Unknown error occurred' },
       { status: 500 }
     );
   }

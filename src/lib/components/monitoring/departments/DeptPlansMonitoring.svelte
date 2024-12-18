@@ -211,7 +211,7 @@
 			const aiEvaluation = data.aiEvaluation;
 			if (typeof aiEvaluation !== "string") throw new TypeError("AI evaluation response is not valid.");
 
-			const negativeKeywords = ["not achieved", "unsuccessful", "failed", "incomplete", "fell short", "below target", "did not meet", "not"];
+			const negativeKeywords = ["not achieved", "unsuccessful", "failed", "incomplete", "fell short", "below target", "did not meet", "not", "has not been achieved"];
 			const isAccomplished = !negativeKeywords.some((neg) => aiEvaluation.toLowerCase().includes(neg));
 			const timeCompleted = isAccomplished ? new Date().toISOString() : null;
 

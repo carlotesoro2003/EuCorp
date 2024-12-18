@@ -165,7 +165,7 @@
 		<!-- Features Section -->
 		<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-10">
 			<div class="max-w-md mx-auto space-y-8">
-				<h2 class="text-2xl font-bold text-white">Transform Your Project Management</h2>
+				<h2 class="text-2xl font-bold text-white text-center">Transform Your Institutional Planning  and Monitoring System</h2>
 				<div class="space-y-4">
 					<div class="flex items-center space-x-4 text-white/90 hover:text-white transition-colors group">
 						<div class="p-2 bg-rose-600/20 rounded-lg group-hover:bg-rose-600/30 transition-colors">
