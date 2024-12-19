@@ -2,23 +2,31 @@
     import { onMount } from "svelte";
     import Chart from "chart.js/auto";
     import { supabase } from "$lib/supabaseClient";
-    import { ChevronDown } from "lucide-svelte";
+    import { ArrowLeft } from "lucide-svelte";
 
-    let classifications: string[] = $state([]);
-    let selectedCategory: string = $state("");
-    let riskData: Record<string, { low: number; medium: number; high: number; very_high: number }> = $state({});
-    let isLoading: boolean = $state(true);
+    interface RiskData {
+        low: number;
+        medium: number;
+        high: number;
+        very_high: number;
+    }
+
+    let classifications: string[] = [];
+    let isDrilledDown = false;
+    let selectedClassification = "";
+    let riskData: Record<string, RiskData> = {};
+    let isLoading = true;
     let canvas: HTMLCanvasElement;
     let chart: Chart | null = null;
 
-    const fetchRiskData = async () => {
+    async function fetchRiskData() {
         try {
             const { data: classificationData, error: classificationError } = await supabase
                 .from("classification")
                 .select("name");
             if (classificationError) throw classificationError;
 
-            classifications = ["All", ...classificationData.map((classification) => classification.name)];
+            classifications = classificationData.map(c => c.name);
             riskData = classifications.reduce((acc, classification) => {
                 acc[classification] = { low: 0, medium: 0, high: 0, very_high: 0 };
                 return acc;
@@ -27,109 +35,155 @@
             const { data: riskMonitoringData, error: riskMonitoringError } = await supabase
                 .from("risk_monitoring")
                 .select(`
-                    control_rating_id ( name ),
-                    risks ( classification ( name ) )
+                    control_rating_id,
+                    risks (
+                        id,
+                        classification ( name )
+                    )
                 `);
             if (riskMonitoringError) throw riskMonitoringError;
 
-            riskMonitoringData.forEach((item) => {
-                const classification = item.risks?.classification?.name || "Unknown";
-                const controlRating = item.control_rating_id?.name.toLowerCase().replace(' ', '_');
-                if (riskData[classification] && controlRating) {
-                    const ratingKey = controlRating === 'very_high' ? 'very_high' : controlRating;
-                    if (riskData[classification][ratingKey] !== undefined) {
-                        riskData[classification][ratingKey]++;
-                        riskData["All"][ratingKey]++;
-                    }
+            riskMonitoringData.forEach((risk) => {
+                const classification = risk.risks?.classification?.name;
+                if (!classification) return;
+
+                const ratingMap = {
+                    1: 'low',
+                    2: 'medium',
+                    3: 'high',
+                    4: 'very_high'
+                };
+
+                const rating = ratingMap[risk.control_rating_id];
+                if (rating && riskData[classification]) {
+                    riskData[classification][rating]++;
                 }
             });
 
-            if (classifications.length > 0) {
-                selectedCategory = "All";
-                setTimeout(() => createChart(), 0);
-            }
+            setTimeout(() => createChart(), 0);
         } catch (error) {
             console.error("Error fetching risk data:", error);
         } finally {
             isLoading = false;
         }
-    };
+    }
 
-    const createChart = () => {
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+   function createChart() {
+    const ctx = canvas?.getContext("2d");
+    if (!ctx) return;
 
-        if (chart) chart.destroy();
+    if (chart) chart.destroy();
 
-        const data = riskData[selectedCategory] || { low: 0, medium: 0, high: 0, very_high: 0 };
-        
-        chart = new Chart(ctx, {
-            type: "doughnut",
-            data: {
-                labels: ["Low Risk", "Medium Risk", "High Risk", "Very High Risk"],
-                datasets: [{
-                    data: [data.low, data.medium, data.high, data.very_high],
-                    backgroundColor: ["#34C759", "#FFCC00", "#FF9500", "#FF3B30"],
-                    borderWidth: 2,
-                    borderColor: "#ffffff",
-                }],
+    const labels = isDrilledDown 
+        ? ["Low Risk", "Medium Risk", "High Risk", "Very High Risk"]
+        : classifications;
+
+    const data = isDrilledDown
+        ? [
+            riskData[selectedClassification].low,
+            riskData[selectedClassification].medium,
+            riskData[selectedClassification].high,
+            riskData[selectedClassification].very_high
+        ]
+        : classifications.map(c => 
+            Object.values(riskData[c]).reduce((sum, val) => sum + val, 0)
+        );
+
+    chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: isDrilledDown
+                    ? ["#22c55e", "#eab308", "#f97316", "#ef4444"]
+                    : generateClassificationColors(classifications.length),
+                borderWidth: 2,
+                borderColor: "#ffffff",
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            layout: {
+                padding: {
+                    top: 20,
+                    bottom: 20
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: "65%",
-                plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                        },
-                    },
+            onClick: (event, elements) => {
+                if (elements && elements.length > 0 && !isDrilledDown) {
+                    const index = elements[0].index;
+                    selectedClassification = classifications[index];
+                    isDrilledDown = true;
+                    createChart();
+                }
+            },
+            onHover: (event, elements) => {
+                    if (!event.native) return;
+                    const target = event.native.target as HTMLElement;
+                    target.style.cursor = elements?.length ? 'pointer' : 'default';
                 },
-            },
-        });
-    };
-
-    $inspect(`Selected category changed to: ${selectedCategory}`);
-
-    $effect(() => {
-        if (selectedCategory && !isLoading) {
-            createChart();
+            plugins: {
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        font: {
+                            size: 11
+                        }
+                    },
+                    maxHeight: 150,
+                    overflow: 'auto'
+                },
+                title: {
+                    display: isDrilledDown,
+                    text: isDrilledDown ? selectedClassification : '',
+                    font: { size: 16, weight: 'bold' }
+                }
+            }
         }
     });
+}
+
+function generateClassificationColors(count: number): string[] {
+    return Array(count).fill(null).map((_, i) => 
+        `hsl(${(i * 360) / count}, 70%, 60%)`
+    );
+}
 
     onMount(() => {
         fetchRiskData();
     });
 </script>
 
-<div class="w-full rounded-lg border bg-card border-border p-4 hover:shadow-lg transition-all duration-300">
+<div class="relative bg-card p-6 rounded-lg border border-border">
     <h2 class="mb-6 text-xl font-semibold">Risks Analysis</h2>
 
-    {#if isLoading}
-    <div class="flex justify-center p-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-    {:else}
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <p class="font-medium text-md">Classification:</p>
-            <div class="relative w-full sm:w-1/3 lg:w-1/4">
-                <select 
-                    bind:value={selectedCategory} 
-                    class="appearance-none bg-secondary border-secondary rounded-lg px-4 py-2 pr-10 text-sm font-medium focus:outline-none transition-colors focus:ring-2 focus:ring-ring w-full md:w-[150px]"
-                >
-                    {#each classifications as classification}
-                        <option value={classification}>{classification}</option>
-                    {/each}
-                </select>
-                <ChevronDown class="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 pointer-events-none" />
-            </div>
-        </div>
-
-        <div class="h-[300px]">
-            <canvas bind:this={canvas}></canvas>
-        </div>
+    {#if isDrilledDown}
+        <button 
+            class="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 text-sm font-medium bg-secondary hover:bg-secondary/80 rounded-lg transition-colors"
+            on:click={() => {
+                isDrilledDown = false;
+                selectedClassification = "";
+                createChart();
+            }}
+        >
+            <ArrowLeft class="w-4 h-4" />
+            Back to Overview
+        </button>
     {/if}
+
+    <div class="h-[400px] w-full">
+        {#if isLoading}
+            <div class="flex items-center justify-center h-full">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        {:else}
+            <canvas bind:this={canvas}></canvas>
+        {/if}
+    </div>
 </div>

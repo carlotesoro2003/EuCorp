@@ -3,6 +3,22 @@ import { supabase } from '../../supabaseClient';
 /**
  * Dashboard data structure.
  */
+
+// Add these types
+interface DepartmentData {
+    name: string;
+    achieved: number;
+    notAchieved: number;
+}
+
+interface StrategicGoalData {
+    id: number;
+    name: string;
+    achieved: number;
+    notAchieved: number;
+    departments: DepartmentData[];
+}
+
 export const dashboardData = {
     cards: [
         {
@@ -31,15 +47,10 @@ export const dashboardData = {
         },
     ],
     barChart: {
-        goals: [
-            'Strategic Goal 1',
-            'Strategic Goal 2',
-            'Strategic Goal 3',
-            'Strategic Goal 4',
-            'Strategic Goal 5',
-        ],
-        achieved: [75, 60, 85, 45, 65],
-        notAchieved: [25, 40, 15, 55, 35],
+        goals: [] as string[],
+        achieved: [] as number[],
+        notAchieved: [] as number[],
+        strategicGoals: [] as StrategicGoalData[],
     },
     riskData: {
         categories: ['Manpower', 'Financial', 'Technical', 'Operational'], // Ensure this exists
@@ -80,6 +91,112 @@ export const dashboardData = {
     ],
 };
 
+export const updateBarChartData = async (): Promise<void> => {
+    try {
+        // Fetch strategic goals with their action plans
+        const { data: goals, error: goalsError } = await supabase
+            .from('strategic_goals')
+            .select(
+                `
+                id,
+                name,
+                goal_no,
+                strategic_objectives (
+                    id,
+                    action_plans (
+                        id,
+                        plan_monitoring (
+                            is_accomplished
+                        )
+                    )
+                )
+            `
+            )
+            .order('goal_no');
+
+        if (goalsError) throw goalsError;
+
+        const processedGoals = goals.map((goal) => {
+            const allPlans = goal.strategic_objectives.flatMap((obj) =>
+                obj.action_plans.flatMap((plan) => plan.plan_monitoring)
+            );
+
+            return {
+                id: goal.id,
+                name: `Goal ${goal.goal_no}: ${goal.name}`,
+                achieved: allPlans.filter((plan) => plan.is_accomplished)
+                    .length,
+                notAchieved: allPlans.filter((plan) => !plan.is_accomplished)
+                    .length,
+                departments: [],
+            };
+        });
+
+        dashboardData.barChart = {
+            goals: processedGoals.map((g) => g.name),
+            achieved: processedGoals.map((g) => g.achieved),
+            notAchieved: processedGoals.map((g) => g.notAchieved),
+            strategicGoals: processedGoals,
+        };
+    } catch (error) {
+        console.error('Error updating bar chart data:', error);
+    }
+};
+
+export const fetchDepartmentDataForGoal = async (
+    goalId: number
+): Promise<DepartmentData[]> => {
+    try {
+        const { data: departments, error } = await supabase
+            .from('departments')
+            .select(
+                `
+                id,
+                name,
+                profiles (
+                    action_plans!inner (
+                        id,
+                        plan_monitoring (
+                            is_accomplished
+                        ),
+                        strategic_objectives!inner (
+                            strategic_goal_id
+                        )
+                    )
+                )
+            `
+            )
+            .filter(
+                'profiles.action_plans.strategic_objectives.strategic_goal_id',
+                'eq',
+                goalId
+            );
+
+        if (error) throw error;
+
+        return departments
+            .filter((dept) =>
+                dept.profiles.some((profile) => profile.action_plans.length > 0)
+            )
+            .map((dept) => {
+                const allPlans = dept.profiles.flatMap((profile) =>
+                    profile.action_plans.flatMap((plan) => plan.plan_monitoring)
+                );
+
+                return {
+                    name: dept.name,
+                    achieved: allPlans.filter((plan) => plan.is_accomplished)
+                        .length,
+                    notAchieved: allPlans.filter(
+                        (plan) => !plan.is_accomplished
+                    ).length,
+                };
+            });
+    } catch (error) {
+        console.error('Error fetching department data:', error);
+        return [];
+    }
+};
 /**
  * Fetch and update the count of strategic goals directly in the dashboardData object.
  */
