@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from "$lib/supabaseClient";
-	import { ArrowUpDown, Download, Notebook, Plus, Search } from "lucide-svelte";
+	import { ArrowUpDown, Download, Notebook, Plus, Search, Check, Target } from "lucide-svelte";
 	import ObjectivesTable from "$lib/components/operational-plans/ObjectivesTable.svelte";
 	import GoalsSelector from "$lib/components/operational-plans/GoalSelector.svelte";
 
@@ -254,6 +254,8 @@
         </div>
     </div>
 
+
+
     <!-- Loading state -->
     {#if loading}
         <div class="flex justify-center p-8">
@@ -268,6 +270,25 @@
             {toggleSort}
             selectedGoal={goals.find((g) => g.id === selectedGoalId)}
         />
+
+		<div class="mt-4 p-4 bg-card rounded-lg shadow border border-border">
+			<h3 class="text-sm font-semibold mb-2">Plan Status Legends:</h3>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+				<div class="flex items-center gap-2">
+					<span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg">
+						N/A
+					</span>
+					<span class="text-sm text-muted-foreground">No Action Plans</span>
+				</div>
+				
+				<div class="flex items-center gap-2">
+					<span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-yellow-100 text-yellow-700 rounded-lg">
+						<Target size={16} /> 1
+					</span>
+					<span class="text-sm text-muted-foreground">Actions Plans Created</span>
+				</div>
+			</div>
+		</div>
 
         <!-- Pagination -->
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4">

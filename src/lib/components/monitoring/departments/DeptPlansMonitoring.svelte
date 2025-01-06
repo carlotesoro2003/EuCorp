@@ -193,28 +193,73 @@
 
 	/** Evaluate action plan using AI */
 	const evaluateActionPlan = async () => {
-		if (!selectedPlan) return;
+		if (!selectedPlan) {
+			console.error("No action plan selected for evaluation.");
+			return;
+		}
+
+		if (!evaluationText.trim()) {
+			alert("Please provide an evaluation text before submitting.");
+			return;
+		}
+
 		isSubmitting = true;
 
-		actionPlans = actionPlans.map((plan) => (plan.id === selectedPlan?.id ? { ...plan, isLoading: true } : plan));
+		// Mark the selected action plan as loading
+		if (selectedPlan) {
+			actionPlans = actionPlans.map((plan) =>
+				selectedPlan && plan.id === selectedPlan.id ? { ...plan, isLoading: true } : plan
+			);
+		}
 
 		try {
+			// Prepare the request payload
+			const payload = {
+				target: selectedPlan.target_output,
+				evaluation: evaluationText,
+				strategic_goal_name: selectedPlan.strategic_goal_name,
+				objective_name: selectedPlan.objective_name,
+				actions_taken: selectedPlan.actions_taken,
+				kpi: selectedPlan.kpi,
+			};
+
+			// Send the request to the AI evaluation endpoint
 			const response = await fetch("/api/evaluate-goal", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ target: selectedPlan.target_output, evaluation: evaluationText }),
+				body: JSON.stringify(payload),
 			});
 
 			const data = await response.json();
-			if (!response.ok || data.error) throw new Error(data.error || "Failed to evaluate action plan.");
 
+			if (!response.ok || data.error) {
+				throw new Error(data.error || "Failed to evaluate action plan.");
+			}
+
+			// Process the AI response
 			const aiEvaluation = data.aiEvaluation;
-			if (typeof aiEvaluation !== "string") throw new TypeError("AI evaluation response is not valid.");
+			if (typeof aiEvaluation !== "string") {
+				throw new TypeError("AI evaluation response is not valid.");
+			}
 
-			const negativeKeywords = ["not achieved", "unsuccessful", "failed", "incomplete", "fell short", "below target", "did not meet", "not", "has not been achieved"];
-			const isAccomplished = !negativeKeywords.some((neg) => aiEvaluation.toLowerCase().includes(neg));
+			// Determine accomplishment status based on AI evaluation
+			const negativeKeywords = [
+				"not achieved",
+				"unsuccessful",
+				"failed",
+				"incomplete",
+				"fell short",
+				"below target",
+				"did not meet",
+				"not",
+				"has not been achieved",
+			];
+			const isAccomplished = !negativeKeywords.some((neg) =>
+				aiEvaluation.toLowerCase().includes(neg)
+			);
 			const timeCompleted = isAccomplished ? new Date().toISOString() : null;
 
+			// Update the action plan in the database
 			const { error } = await supabase
 				.from("plan_monitoring")
 				.update({
@@ -227,8 +272,9 @@
 
 			if (error) throw error;
 
+			// Update the local state with the evaluation results
 			actionPlans = actionPlans.map((plan) =>
-				plan.id === selectedPlan?.id
+				selectedPlan && plan.id === selectedPlan.id
 					? {
 							...plan,
 							is_accomplished: isAccomplished,
@@ -236,18 +282,25 @@
 							statement: aiEvaluation,
 							time_completed: timeCompleted,
 							isLoading: false,
-						}
+					}
 					: plan
 			);
 
+			// Close the modal after successful submission
 			closeEvaluationModal();
 		} catch (error) {
 			console.error("Error evaluating action plan:", error);
-			actionPlans = actionPlans.map((plan) => (plan.id === selectedPlan?.id ? { ...plan, isLoading: false } : plan));
+			alert("An error occurred while evaluating the action plan. Please try again.");
+			// Reset loading state for the selected plan
+			actionPlans = actionPlans.map((plan) =>
+				selectedPlan && plan.id === selectedPlan.id ? { ...plan, isLoading: false } : plan
+		);
 		} finally {
-        isSubmitting = false;
-    }
+			// Ensure `isSubmitting` is reset
+			isSubmitting = false;
+		}
 	};
+
 
 	onMount(async () => {
 		await fetchUserProfile();
@@ -398,6 +451,16 @@
 					</button>
 				</div>
 				<div class="p-4">
+					<div class="mb-4">
+						<label class="block text-sm font-medium mb-1">Strategic Goal</label>
+						<p class="text-muted-foreground">{selectedPlan?.strategic_goal_name}</p>
+					</div>
+
+					<div class="mb-4">
+						<label class="block text-sm font-medium mb-1">Objective</label>
+						<p class="text-muted-foreground">{selectedPlan?.objective_name}</p>
+					</div>
+					
 					<div class="mb-4">
 						<label class="block text-sm font-medium mb-1">Action Plan</label>
 						<p class="text-muted-foreground">{selectedPlan?.actions_taken}</p>

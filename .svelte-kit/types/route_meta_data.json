@@ -6,6 +6,9 @@
 	"/(app)/api/evaluate-goal": [
 		"src/routes/(app)/api/evaluate-goal/+server.ts"
 	],
+	"/(app)/api/evaluate-plan-monitoring": [
+		"src/routes/(app)/api/evaluate-plan-monitoring/+server.ts"
+	],
 	"/(app)/api/summary-report-opt-monitoring": [
 		"src/routes/(app)/api/summary-report-opt-monitoring/+server.ts"
 	],
