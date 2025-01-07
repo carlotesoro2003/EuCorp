@@ -7,7 +7,7 @@
         id: number;
         description: string;
         created_at: string;
-        event_type: string;
+        event_type: string; 
         is_read: boolean;
         is_new?: boolean; 
     }

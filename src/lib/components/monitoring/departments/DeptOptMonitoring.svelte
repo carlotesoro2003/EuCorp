@@ -13,7 +13,15 @@
 		time_completed: string | null;
 		evaluation: string;
 		statement: string | null;
+		school_year: number | null;
 	}
+
+	type SchoolYear = {
+		id: number;
+		school_year: string;
+		start_date: string;
+		end_date: string;
+  	};
 
 	// State variables
 	let opportunities: MonitoringOpportunity[] = $state([]);
@@ -29,6 +37,8 @@
 	let sortAsc: boolean = $state(true);
 	let selectedStatus: string = $state("all");
 	let isSubmitting = $state(false);
+	let schoolYears : SchoolYear[] = $state([]);
+	let schoolYearFilter: number | "all" = $state("all");
 
 
 	/** Pagination state */
@@ -45,14 +55,16 @@
 		isLoading: boolean;
 		timeCompleted: string | null;
 		aiStatement: string | null;
+		school_year: number | null;
 	}[] = $state([]);
 
 	/** Derived values */
 	const filteredGoals = $derived(
-		goals.filter((goal) => {
+		goals.filter((goal, opportunity) => {
 			const matchesSearch = goal.statement.toLowerCase().includes(searchTerm.toLowerCase()) || goal.goal.toLowerCase().includes(searchTerm.toLowerCase());
 			const matchesStatus = selectedStatus === "all" ? true : selectedStatus === "achieved" ? goal.achieved === "Achieved" : goal.achieved !== "Achieved";
-			return matchesSearch && matchesStatus;
+			const matchesSchoolYear = schoolYearFilter === "all" ? true : goal.school_year === schoolYearFilter;
+			return matchesSearch && matchesStatus && matchesSchoolYear;
 		})
 	);
 
@@ -121,6 +133,22 @@
 		profileId = profileData.id;
 	};
 
+	const fetchSchoolYears = async() => {
+		try{
+			const {data, error} = await supabase
+			.from("school_years")
+			.select("*")
+			.order("start_date", {ascending: false});
+
+			if(error) throw error;
+
+			schoolYears = data;
+		}
+		catch(error){
+			console.error("Error fetching school years:", error);
+		}
+	}
+
 	/** Fetch opportunities */
 	const fetchOpportunities = async () => {
 		try {
@@ -150,7 +178,7 @@
                     time_completed,
                     evaluation,
                     statement,
-                    opportunities (opt_statement, kpi, target_output, planned_actions)
+                    opportunities (opt_statement, kpi, target_output, planned_actions, school_year)
                 `
 				)
 				.in("profile_id", profileIdList);
@@ -169,6 +197,7 @@
 				time_completed: monitoringItem.time_completed,
 				evaluation: monitoringItem.evaluation || "",
 				statement: monitoringItem.statement || null,
+				school_year: monitoringItem.opportunities?.school_year || null,
 			}));
 
 			goals = opportunities.map((opportunity) => ({
@@ -181,6 +210,7 @@
 				isLoading: false,
 				timeCompleted: opportunity.time_completed,
 				aiStatement: opportunity.statement || null,
+				school_year: opportunity.school_year || null,
 			}));
 		} catch (error) {
 			console.error("Error fetching opportunities:", error);
@@ -260,6 +290,7 @@
 
 	onMount(async () => {
 		await fetchUserProfile();
+		await fetchSchoolYears();
 		await fetchOpportunities();
 	});
 </script>
@@ -280,6 +311,12 @@
 				<option value="all">All Status</option>
 				<option value="achieved">Achieved</option>
 				<option value="pending">Pending</option>
+			</select>
+			<select bind:value={schoolYearFilter} class="bg-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring w-full sm:w-[200px]">
+				<option value="all">All School Years</option>
+				{#each schoolYears as year}
+					<option value={year.id}>{year.school_year}</option>
+				{/each}
 			</select>
 		</div>
 	</div>

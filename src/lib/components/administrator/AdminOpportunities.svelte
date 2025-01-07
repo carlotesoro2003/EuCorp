@@ -21,6 +21,7 @@
 		profile_id: string;
 		department_name: string | null;
 		department_id: string | null;
+		school_year: number | null;
 		user_name: string | null;
 	};
 
@@ -28,6 +29,14 @@
 		id: string;
 		name: string;
 	};
+
+	
+	type SchoolYear = {
+		id: number;
+		school_year: string;
+		start_date: string;
+		end_date: string;
+  	};
 
 	type SortField = "opt_statement" | "planned_actions" | "department_name" | "budget";
 	type SortDirection = "asc" | "desc";
@@ -49,8 +58,8 @@
 	let loading: boolean = $state(true);
 	let approvingId: number | null = $state(null);
 	let deletingId: number | null = $state(null);
-
 	let isLoading = false;
+	let schoolYearFilter: number | "all" = $state("all");
 
 	// Data state
 	let opportunities: Opportunity[] = $state([]);
@@ -59,10 +68,12 @@
 	let adminName: string | null = $state(null);
 	let vicePresidentName: string | null = $state(null);
 	let presidentName: string | null = $state(null);
+	let schoolYears: SchoolYear[] = $state([]);
 
 	// Initialize data on component mount
 	const init = async () => {
 		await fetchCurrentUserRole();
+		await fetchSchoolYears();
 		await fetchAdminName();
 		await fetchOpportunities();
 		await fetchDepartments();
@@ -86,6 +97,20 @@
 
 		userRole = profile.role;
 	};
+
+	const fetchSchoolYears = async () => {
+		const {data, error} = await supabase
+		.from('school_years')
+		.select('*')
+
+		if(error){
+			displayAlert("Error fetching school years: " + error.message, "error");
+			return;
+		}
+		else{
+			schoolYears = data;
+		}
+	}
 
 	/** Fetch admin name */
 	const fetchAdminName = async () => {
@@ -171,7 +196,10 @@
 				const searchFields = `${opportunity.opt_statement} ${opportunity.planned_actions} ${opportunity.department_name}`.toLowerCase();
 				const matchesSearch = searchFields.includes(searchQuery.toLowerCase());
 				const matchesDepartment = departmentFilter === "all" || opportunity.department_name === departmentFilter;
-				return matchesSearch && matchesDepartment;
+				const matchesSchoolYear = schoolYearFilter == "all" || opportunity.school_year == schoolYearFilter;
+				return matchesSearch && 
+				matchesDepartment &&
+				matchesSchoolYear;
 			})
 			.sort((a, b) => {
 				const aValue = String(a[sortField]);
@@ -471,6 +499,13 @@
 				<option value="all">All Departments</option>
 				{#each departments as department}
 					<option value={department.name}>{department.name}</option>
+				{/each}
+			</select>
+
+			<select bind:value={schoolYearFilter} class="bg-secondary rounded-lg px-3 py-2 w-full md:w-[200px]">
+				<option value="all">All School Years</option>
+				{#each schoolYears as schoolYear}
+					<option value={schoolYear.id}>{schoolYear.school_year}</option>
 				{/each}
 			</select>
 		</div>
