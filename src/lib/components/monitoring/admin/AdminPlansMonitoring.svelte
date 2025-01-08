@@ -20,7 +20,16 @@
 		goal: string;
 		objective: string; 
 		goal_no: number; 
+		target_output: string;
+		school_year: number | null;
 	}
+	
+	type SchoolYear = {
+		id: number;
+		school_year: string;
+		start_date: string;
+		end_date: string;
+  	};
 
 	/** State variables */
 	let plans: PlanMonitoring[] = $state([]);
@@ -35,6 +44,10 @@
 	let showAlert: boolean = $state(false);
 	let alertMessage: string = $state("");
 	let alertType: "success" | "error" = $state("success");
+	let schoolYears: SchoolYear[] = $state([]);
+	let schoolYearFilter: number | 'all' = $state('all');
+	
+	
 
 	/** Pagination state */
 	let currentPage: number = $state(1);
@@ -83,6 +96,22 @@
 		}, 3000);
 	};
 
+	const fetchSchoolYears = async() => {
+		try{
+			const {data, error} = await supabase	
+				.from("school_years")
+				.select("*")
+				.order("school_year", {ascending: false});
+
+			if(error) throw error;
+
+			schoolYears = data;
+		}
+		catch(error){
+			console.error("Error fetching school years:", error);
+		}
+	}
+
 	/** Fetch plans from database */
 		const fetchPlanMonitoring = async () => {
 		isLoading = true;
@@ -103,7 +132,11 @@
 					strategic_objectives (
 						name,
 						strategic_goal_id,
-						strategic_goals (name, goal_no)
+						strategic_goals (
+							name, 
+							goal_no,
+							school_year
+						)
 					)
 				)
 			`);
@@ -130,6 +163,7 @@
 				objective: plan.action_plans?.strategic_objectives?.name || "No Objective",
 				goal: plan.action_plans?.strategic_objectives?.strategic_goals?.name || "No Goal",
 				goal_no: plan.action_plans?.strategic_objectives?.strategic_goals?.goal_no || 0,
+				school_year: plan.action_plans?.strategic_objectives?.strategic_goals?.school_year || 0,
 			}));
 
 			applyFilter();
@@ -242,6 +276,10 @@
 
 		if (selectedStrategicObjective !== "all") {
 			filtered = filtered.filter((p) => p.objective === selectedStrategicObjective);
+		}
+
+		if(schoolYearFilter !== 'all'){
+			filtered = filtered.filter((p) => p.school_year === schoolYearFilter);
 		}
 
 		if (searchQuery) {
@@ -364,6 +402,7 @@
 	fetchDepartments();
 	fetchStrategicGoals();
 	fetchStrategicObjectives();
+	fetchSchoolYears();
 
 	/** Watch for filter changes */
 	$effect(() => {
@@ -538,6 +577,34 @@
 								}}
 							>
 								{objective}
+							</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
+
+			<!-- School Year Dropdown -->
+			<div class="relative">
+				<button
+					class="px-4 py-2 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+					onclick={() => (showStrategicObjectiveDropdown = !showStrategicObjectiveDropdown)}
+				>
+					{schoolYearFilter === "all" ? "All School Years" : schoolYearFilter}
+					<ChevronDown class="w-4 h-4" />
+				</button>
+			
+				{#if showStrategicObjectiveDropdown}
+					<div class="absolute top-full left-0 mt-1 w-56 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 z-10">
+						{#each schoolYears as year}
+							<button
+								class="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg {schoolYearFilter === year.school_year ? 'bg-gray-50 dark:bg-gray-700' : ''}"
+								onclick={() => {
+									schoolYearFilter = parseInt(year.school_year, 10);
+									showStrategicObjectiveDropdown = false;
+									applyFilter();
+								}}
+							>
+								{year.school_year}
 							</button>
 						{/each}
 					</div>

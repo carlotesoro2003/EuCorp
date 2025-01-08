@@ -610,8 +610,8 @@
         </div>
         <div class="p-4">
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Strategic Goal</label>
-            <p class="text-muted-foreground">
+            <label for="strategic-goal" class="block text-sm font-medium mb-1">Strategic Goal</label>
+            <p id="strategic-goal" class="text-muted-foreground">
               {selectedPlan?.strategic_goal_name}
             </p>
           </div>

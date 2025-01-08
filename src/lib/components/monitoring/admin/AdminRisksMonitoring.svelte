@@ -13,11 +13,19 @@
 		control_rating: string | null;
 		monitoring_rating: string | null;
 		is_achieved: boolean;
+		school_year: number | null;
 	}
 
 	/** Types */
 	type SortField = "rrn" | "risk_statement" | "likelihood_rating" | "severity" | "control_rating" | "monitoring_rating";
 	type SortDirection = "asc" | "desc";
+	type SchoolYear = {
+		id: number;
+		school_year: string;
+		start_date: string;
+		end_date: string;
+  	};
+
 
 	/** State variables */
 	let risksMonitoring: RiskMonitoring[] = $state([]);
@@ -30,6 +38,25 @@
 	let sortDirection: SortDirection = $state("asc");
 	let statusFilter: "all" | boolean = $state("all");
 	let showAlert: boolean = $state(false);
+	let schoolYears: SchoolYear[] = $state([]);
+	let schoolYearFilter : number | 'all' = $state('all');
+
+
+	const fetchSChoolYears = async() => {
+		try{
+			const {data, error} = await supabase
+			.from('school_years')
+			.select('*')
+			
+			if(error) throw error;
+
+			schoolYears = data;
+		}
+		catch(error){
+			console.error("Error fetching school years:", error);
+		}
+	}
+
 
 	/** Fetch risk monitoring data */
 	const fetchRiskMonitoring = async () => {
@@ -38,7 +65,8 @@
                 id,
                 risks (
                     rrn,
-                    risk_statement
+                    risk_statement,
+					school_year
                 ),
                 likelihood_rating:likelihood_rating_id(name),
                 severity:severity_id(name),
@@ -58,6 +86,7 @@
 				control_rating: item.control_rating?.name || "Not Available",
 				monitoring_rating: item.monitoring_rating?.status || "Not Available",
 				is_achieved: item.is_achieved,
+				school_year: item.risks.school_year || 'Not Available'
 			}));
 		} catch (error) {
 			console.error("Error fetching risk monitoring data:", error);
@@ -85,7 +114,8 @@
 				const searchFields = `${risk.rrn} ${risk.risk_statement} ${risk.likelihood_rating} ${risk.severity} ${risk.control_rating} ${risk.monitoring_rating}`.toLowerCase();
 				const matchesSearch = searchFields.includes(searchQuery.toLowerCase());
 				const matchesStatus = statusFilter === "all" || risk.is_achieved === statusFilter;
-				return matchesSearch && matchesStatus;
+				const matchesSchoolYear = schoolYearFilter === 'all' || risk.school_year === schoolYearFilter;
+				return matchesSearch && matchesStatus && matchesSchoolYear;
 			})
 			.sort((a, b) => {
 				const aValue = String(a[sortField]);
@@ -119,6 +149,7 @@
 
 	/** Fetch data when component mounts */
 	fetchRiskMonitoring();
+	fetchSChoolYears();
 </script>
 
 <div class="flex flex-col gap-4 p-4 container mx-auto">
@@ -146,6 +177,13 @@
 				<option value="all">All Status</option>
 				<option value={true}>Achieved</option>
 				<option value={false}>Still mitigating</option>
+			</select>
+
+			<select bind:value={schoolYearFilter} class="bg-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring w-full md:w-[200px]">
+				<option value="all">All School Years</option>
+				{#each schoolYears as year}
+					<option value={year.id}>{year.school_year}</option>
+				{/each}
 			</select>
 		</div>
 	</div>
