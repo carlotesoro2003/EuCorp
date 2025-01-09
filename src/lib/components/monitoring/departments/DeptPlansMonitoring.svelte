@@ -56,6 +56,7 @@
   let isSubmitting = $state(false);
   let schoolYears: SchoolYear[] = $state([]);
   let schoolYearFilter: number | "all" = $state("all");
+  let currentSchoolYear: number | null = $state(null);
 
   /** Pagination state */
   let currentPage: number = $state(1);
@@ -68,26 +69,28 @@
   ]);
 
   const filteredPlans = $derived(
-  actionPlans.filter((plan) => {
-    const matchesSearch = plan.strategic_goal_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          plan.objective_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          plan.actions_taken.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === "all" ? true : selectedStatus === "achieved" ? plan.is_accomplished : !plan.is_accomplished;
-    const matchesGoal = selectedGoal === "all" || plan.strategic_goal_name === selectedGoal;
-    const matchesSchoolYear = schoolYearFilter === "all" || plan.school_year === Number(schoolYearFilter);
+    actionPlans.filter((plan) => {
+      const matchesSearch =
+        plan.strategic_goal_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        plan.objective_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan.actions_taken.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        selectedStatus === "all"
+          ? true
+          : selectedStatus === "achieved"
+            ? plan.is_accomplished
+            : !plan.is_accomplished;
+      const matchesGoal =
+        selectedGoal === "all" || plan.strategic_goal_name === selectedGoal;
+      const matchesSchoolYear =
+        schoolYearFilter === "all" ||
+        plan.school_year === Number(schoolYearFilter);
 
-    console.log({
-      plan,
-      matchesSearch,
-      matchesStatus,
-      matchesGoal,
-      matchesSchoolYear,
-    });
-
-    return matchesSearch && matchesStatus && matchesGoal && matchesSchoolYear;
-  })
-);
-
+      return matchesSearch && matchesStatus && matchesGoal && matchesSchoolYear;
+    })
+  );
 
   const sortedAndPaginatedPlans = $derived(
     filteredPlans
@@ -139,6 +142,20 @@
     } catch (error) {
       console.error("Error fetching session:", error);
     }
+  };
+
+  const getCurrentSchoolYear = async () => {
+    const today = new Date().toISOString().split("T")[0];
+    const { data, error } = await supabase
+      .from("school_years")
+      .select("id")
+      .lte("start_date", today)
+      .gte("end_date", today)
+      .single();
+
+    if (error) throw error;
+    currentSchoolYear = data?.id || null;
+    console.log("Current School Year:", currentSchoolYear);
   };
 
   const fetchSchoolYears = async () => {
@@ -236,8 +253,7 @@
         isLoading: false,
       }));
 
-	  console.log("Fetched action plans with school year:", plans); // Log action plans with school year
-
+      console.log("Fetched action plans with school year:", plans); // Log action plans with school year
 
       const monitoringData = await fetchPlanMonitoringData(
         plans.map((p) => p.id)
@@ -378,7 +394,54 @@
     }
   };
 
+  const carryOverPlan = async (plan: ActionPlan) => {
+    try {
+      // Fetch the `strategic_goal_id` for the selected school year
+      const { data: strategicGoal, error: fetchError } = await supabase
+        .from("strategic_goals")
+        .select("id")
+        .eq("school_year", schoolYearFilter)
+        .single();
+
+      if (fetchError || !strategicGoal) {
+        throw new Error(
+          "No strategic goal found for the selected school year. Cannot carry over the action plan."
+        );
+      }
+
+      // Update the `strategic_goal_id` in the `action_plans` table
+      const { error: updateError } = await supabase
+        .from("action_plans")
+        .update({ strategic_goal_id: strategicGoal.id })
+        .eq("id", plan.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      
+
+      // Update the local state to reflect the changes in the UI
+      actionPlans = actionPlans.map((p) =>
+        p.id === plan.id
+          ? {
+              ...p,
+              school_year: Number(schoolYearFilter), // Update the school year
+            }
+          : p
+      );
+
+      alert("Action Plan carried over successfully!");
+    } catch (error) {
+      console.error("Error carrying over action plan:", error);
+      alert(
+        "An error occurred while carrying over the action plan. Please try again."
+      );
+    }
+  };
+
   onMount(async () => {
+    await getCurrentSchoolYear();
     await fetchUserProfile();
     await fetchSchoolYears();
     await fetchActionPlans();
@@ -486,6 +549,7 @@
               <th class="px-4 py-3 text-left">Actions Taken</th>
               <th class="px-4 py-3 text-left">Status</th>
               <th class="px-4 py-3 text-center">Statement</th>
+              <th class="px-4 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-border">
@@ -541,7 +605,19 @@
                     {/if}
                   </div>
                 </td>
-              </tr>
+                <td class="px-4 py-3 align-top">
+                  <div class="flex items-center justify-center">
+                    {#if schoolYearFilter !== currentSchoolYear}
+                      <button
+                        class="px-3 py-1 text-sm bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-md"
+                        onclick={() => carryOverPlan(plan)}
+                      >
+                        Carry Over
+                      </button>
+                    {/if}
+                  </div>
+                </td></tr
+              >
             {/each}
           </tbody>
         </table>
@@ -610,34 +686,37 @@
         </div>
         <div class="p-4">
           <div class="mb-4">
-            <label for="strategic-goal" class="block text-sm font-medium mb-1">Strategic Goal</label>
+            <label for="strategic-goal" class="block text-sm font-medium mb-1"
+              >Strategic Goal</label
+            >
             <p id="strategic-goal" class="text-muted-foreground">
               {selectedPlan?.strategic_goal_name}
             </p>
           </div>
 
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Objective</label>
-            <p class="text-muted-foreground">{selectedPlan?.objective_name}</p>
+            <label for="objective" class="block text-sm font-medium mb-1">Objective</label>
+            <p id="objective" class="text-muted-foreground">{selectedPlan?.objective_name}</p>
           </div>
 
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Action Plan</label>
-            <p class="text-muted-foreground">{selectedPlan?.actions_taken}</p>
+            <label for="actions-taken" class="block text-sm font-medium mb-1">Action Plan</label>
+            <p id="actions-taken" class="text-muted-foreground">{selectedPlan?.actions_taken}</p>
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">KPI</label>
-            <p class="text-muted-foreground">{selectedPlan?.kpi}</p>
+            <label for="kpi" class="block text-sm font-medium mb-1">KPI</label>
+            <p id="kpi" class="text-muted-foreground">{selectedPlan?.kpi}</p>
           </div>
           <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Target Output</label>
-            <p class="text-muted-foreground">{selectedPlan?.target_output}</p>
+            <label for="target-output" class="block text-sm font-medium mb-1">Target Output</label>
+            <p id="target-output" class="text-muted-foreground">{selectedPlan?.target_output}</p>
           </div>
           <div class="mb-6">
-            <label class="block text-sm font-medium mb-1"
+            <label for="evaluation-text" class="block text-sm font-medium mb-1"
               >Actions Taken to Achieve Action Plan</label
             >
             <textarea
+              id="evaluation-text"
               bind:value={evaluationText}
               class="w-full h-32 px-3 py-2 text-sm bg-secondary rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-ring resize-none"
               placeholder="Enter your actions..."
