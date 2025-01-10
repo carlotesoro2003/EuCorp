@@ -396,37 +396,40 @@
 
   const carryOverPlan = async (plan: ActionPlan) => {
     try {
-      // Fetch the `strategic_goal_id` for the selected school year
+      if (schoolYearFilter === "all") {
+        alert("Please select a specific school year to carry over the plan.");
+        return;
+      }
+
+      // Fetch the current strategic goal for the plan
       const { data: strategicGoal, error: fetchError } = await supabase
         .from("strategic_goals")
-        .select("id")
-        .eq("school_year", schoolYearFilter)
+        .select("id, school_year")
+        .eq("id", plan.objective_id) 
         .single();
 
       if (fetchError || !strategicGoal) {
         throw new Error(
-          "No strategic goal found for the selected school year. Cannot carry over the action plan."
+          "Failed to fetch the strategic goal for the selected action plan."
         );
       }
 
-      // Update the `strategic_goal_id` in the `action_plans` table
+      // Update the `school_year` field in the `strategic_goals` table
       const { error: updateError } = await supabase
-        .from("action_plans")
-        .update({ strategic_goal_id: strategicGoal.id })
-        .eq("id", plan.id);
+        .from("strategic_goals")
+        .update({ school_year: schoolYearFilter })
+        .eq("id", strategicGoal.id);
 
       if (updateError) {
         throw updateError;
       }
-
-      
 
       // Update the local state to reflect the changes in the UI
       actionPlans = actionPlans.map((p) =>
         p.id === plan.id
           ? {
               ...p,
-              school_year: Number(schoolYearFilter), // Update the school year
+              school_year: Number(schoolYearFilter), // Reflect the updated school year
             }
           : p
       );
@@ -695,21 +698,33 @@
           </div>
 
           <div class="mb-4">
-            <label for="objective" class="block text-sm font-medium mb-1">Objective</label>
-            <p id="objective" class="text-muted-foreground">{selectedPlan?.objective_name}</p>
+            <label for="objective" class="block text-sm font-medium mb-1"
+              >Objective</label
+            >
+            <p id="objective" class="text-muted-foreground">
+              {selectedPlan?.objective_name}
+            </p>
           </div>
 
           <div class="mb-4">
-            <label for="actions-taken" class="block text-sm font-medium mb-1">Action Plan</label>
-            <p id="actions-taken" class="text-muted-foreground">{selectedPlan?.actions_taken}</p>
+            <label for="actions-taken" class="block text-sm font-medium mb-1"
+              >Action Plan</label
+            >
+            <p id="actions-taken" class="text-muted-foreground">
+              {selectedPlan?.actions_taken}
+            </p>
           </div>
           <div class="mb-4">
             <label for="kpi" class="block text-sm font-medium mb-1">KPI</label>
             <p id="kpi" class="text-muted-foreground">{selectedPlan?.kpi}</p>
           </div>
           <div class="mb-4">
-            <label for="target-output" class="block text-sm font-medium mb-1">Target Output</label>
-            <p id="target-output" class="text-muted-foreground">{selectedPlan?.target_output}</p>
+            <label for="target-output" class="block text-sm font-medium mb-1"
+              >Target Output</label
+            >
+            <p id="target-output" class="text-muted-foreground">
+              {selectedPlan?.target_output}
+            </p>
           </div>
           <div class="mb-6">
             <label for="evaluation-text" class="block text-sm font-medium mb-1"

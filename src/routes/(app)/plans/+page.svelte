@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Search, ArrowUpDown, Plus, Edit, Trash2, Eye, Pencil, Target, Check } from "lucide-svelte";
+	import { Search, ArrowUpDown, Plus, Edit, Trash2, Eye, Pencil, Target, Check, ArchiveRestore, Goal } from "lucide-svelte";
 	import { supabase } from "$lib/supabaseClient";
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
@@ -56,8 +56,8 @@
 	let strategicGoals: StrategicGoal[] = $state([]);
 	let leads: Lead[] = $state([]);
 	let schoolYears: SchoolYear[] = $state([]);
-	let currentSchoolYearId: number | null = null;
-	let userRole: string | null = null;
+	let currentSchoolYearId: number | null = $state(null);
+	let userRole: string | null = $state(null);
 
 	/** Initialize Data on Mount */
 	onMount(() => {
@@ -197,7 +197,6 @@
 			console.error("Error processing action plans data:", error);
 		}
 	};
-
 
 
 
@@ -372,6 +371,27 @@
 	);
 
 	const totalPages = $derived(Math.ceil(filteredItems.length / itemsPerPage));
+
+	const carryOverGoal = async(goal: StrategicGoal) => {
+		try{
+			const {data, error} = await supabase
+			.from("strategic_goals")
+			.update({school_year: currentSchoolYearId})
+			.eq("id", goal.id);
+
+			if(error) throw error;
+
+			strategicGoals = strategicGoals.map((g) => 
+				g.id === goal.id ? { ...g, school_year: currentSchoolYearId } : g
+			);
+
+			displayAlert('Goal carried over successfully', 'success');
+		}
+		catch(error){
+			console.error('Error carrying over goal:', error);
+			displayAlert('Error carrying over goal', 'error');
+		}
+	}
 </script>
 
 <div class="flex flex-col gap-4 p-4 container mx-auto">
@@ -415,7 +435,7 @@
 
 	{#if loading}
 		<div class="flex justify-center p-8">
-			<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+			<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 		</div>
 	{:else}
 		<div class="overflow-x-auto bg-card rounded-lg shadow border border-border">
@@ -525,6 +545,15 @@
 									>
 										<Trash2 size={18} />
 									</button>
+									{#if currentSchoolYearId && goal.school_year !== currentSchoolYearId}
+										<button
+											class="p-1.5 hover:bg-primary/10 rounded-md transition-colors text-primary"
+											title="Carry over"
+											onclick = {() => carryOverGoal(goal)}
+										>
+											<ArchiveRestore size={18} />
+										</button>
+									{/if}
 								</div>
 							</td>
 						</tr>
