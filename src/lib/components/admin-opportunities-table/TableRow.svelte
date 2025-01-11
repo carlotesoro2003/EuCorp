@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pencil, Trash2 } from "lucide-svelte";
+	import { Pencil, Trash2, ArchiveRestore } from "lucide-svelte";
 
 	type Opportunity = {
 		id: number;
@@ -13,6 +13,7 @@
 		is_approved_vp: boolean;
 		is_approved_president: boolean;
 		department_name: string | null;
+		school_year: number;
 	};
 
 	let {
@@ -21,16 +22,20 @@
 		onEdit,
 		onDelete,
 		onApprove,
+		onCarryOver,
 		approvingId,
 		deletingId,
+		currentSchoolYearId,
 	}: {
 		opportunity: Opportunity;
 		userRole: string | null;
 		onEdit: (opportunity: Opportunity) => void;
 		onDelete: (id: number) => void;
 		onApprove: (id: number) => void;
+		onCarryOver: (id: number) => void;
 		approvingId: number | null;
 		deletingId: number | null;
+		currentSchoolYearId: number | null;
 	} = $props();
 </script>
 
@@ -53,6 +58,11 @@
 			<button onclick={() => onDelete(opportunity.id)} disabled={deletingId === opportunity.id} class="p-1 rounded hover:bg-muted text-red-500 hover:text-red-600 disabled:opacity-50">
 				<Trash2 size={16} />
 			</button>
+			{#if opportunity.school_year !== currentSchoolYearId}
+				<button class="p-1 rounded hover:bg-muted text-blue-500 hover:text-blue-600" title="Carry Over" onclick={() => onCarryOver(opportunity.id)}>
+					<ArchiveRestore size={16} />
+				</button>
+			{/if}
 		</div>
 	</td>
 </tr>

@@ -1,36 +1,36 @@
 <script lang="ts">
-	import { Trash2 } from "lucide-svelte";
+	import { Trash2, ArchiveRestore } from "lucide-svelte";
 
-	let { risk, userRole, classification, likelihoodRatings, severities, riskControlRatings, riskMonitoringRatings, riskAssessments, onDelete, onApprove, approvingId, deletingId } = $props();
+	let { risk, userRole, classification, likelihoodRatings, severities, riskControlRatings, riskMonitoringRatings, riskAssessments, onDelete, onApprove, onCarryOver,approvingId, deletingId, currentSchoolYearId } = $props();
 </script>
 
 <tr class="hover:bg-muted/50">
 	<td class="px-4 py-3 align-top">{risk.rrn}</td>
 	<td class="px-4 py-3 align-top">{risk.risk_statement}</td>
 	<td class="px-4 py-3 align-top">
-		{classification.find((cls) => cls.id === risk.classification)?.name || "N/A"}
+		{classification.find((cls: { id: number; name: string }) => cls.id === risk.classification)?.name || "N/A"}
 	</td>
 	<td class="px-4 py-3 align-top">{risk.actions}</td>
 	<td class="px-4 py-3 align-top">{risk.key_persons}</td>
 	<td class="px-4 py-3 align-top">P{risk.budget.toFixed(2)}</td>
 	<td class="px-4 py-3 align-top">
-		{#each riskAssessments.filter((a) => a.risk_id === risk.id) as assessment}
+		{#each riskAssessments.filter((a: { risk_id: number }) => a.risk_id === risk.id) as assessment}
 			<div class="space-y-1">
 				<div>
 					<span class="font-medium">Likelihood:</span>
-					{likelihoodRatings.find((lr) => lr.id === assessment.lr)?.name || "N/A"}
+					{likelihoodRatings.find((lr: { id: number; name: string }) => lr.id === assessment.lr)?.name || "N/A"}
 				</div>
 				<div>
 					<span class="font-medium">Severity:</span>
-					{severities.find((s) => s.id === assessment.s)?.value || "N/A"}
+					{severities.find((s: { id: number; value: string }) => s.id === assessment.s)?.value || "N/A"}
 				</div>
 				<div>
 					<span class="font-medium">Control Rating:</span>
-					{riskControlRatings.find((rcr) => rcr.id === assessment.rcr)?.name || "N/A"}
+					{riskControlRatings.find((rcr: { id: number; name: string }) => rcr.id === assessment.rcr)?.name || "N/A"}
 				</div>
 				<div>
 					<span class="font-medium">Monitoring Rating:</span>
-					{riskMonitoringRatings.find((rmr) => rmr.id === assessment.rmr)?.status || "N/A"}
+					{riskMonitoringRatings.find((rmr: { id: number; status: string }) => rmr.id === assessment.rmr)?.status || "N/A"}
 				</div>
 			</div>
 		{/each}
@@ -43,6 +43,16 @@
 			<button onclick={() => onDelete(risk.id)} disabled={deletingId === risk.id} class="p-1 rounded hover:bg-muted text-red-500 hover:text-red-600 disabled:opacity-50">
 				<Trash2 size={16} />
 			</button>
+
+			{#if risk.school_year !== currentSchoolYearId}
+				<button class="p-1 rounded hover:bg-muted text-blue-500 hover:text-blue-600"
+					title="Carry Over"
+					onclick={() => onCarryOver(risk.id)}
+				>
+					<ArchiveRestore size={16} />
+				</button>
+			{/if}
+		
 		</div>
 	</td>
 </tr>

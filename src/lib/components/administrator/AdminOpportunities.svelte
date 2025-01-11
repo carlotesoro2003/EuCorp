@@ -60,6 +60,7 @@
 	let deletingId: number | null = $state(null);
 	let isLoading = false;
 	let schoolYearFilter: number | "all" = $state("all");
+	let currentSchoolYearId : number | null = $state(null);
 
 	// Data state
 	let opportunities: Opportunity[] = $state([]);
@@ -73,6 +74,7 @@
 	// Initialize data on component mount
 	const init = async () => {
 		await fetchCurrentUserRole();
+		await fetchCurrentSchoolYear();
 		await fetchSchoolYears();
 		await fetchAdminName();
 		await fetchOpportunities();
@@ -109,6 +111,62 @@
 		}
 		else{
 			schoolYears = data;
+		}
+	}
+
+	const fetchCurrentSchoolYear = async() => {
+		try{
+			const today = new Date().toISOString().split('T')[0];
+			const {data, error} = await supabase
+			.from('school_years')
+			.select('id')
+			.lte('start_date', today)
+			.gte('end_date', today)
+			.maybeSingle();
+
+			if(error){
+				displayAlert("Error fetching current school year: " + error.message, "error");
+				return;
+			}
+			else{
+				currentSchoolYearId = data?.id || null;
+				schoolYearFilter = currentSchoolYearId || "all";
+			}
+		}
+		catch(error){
+			displayAlert("Error fetching current school year: " + (error as Error).message, "error");
+		}
+	}
+
+	const carryOverOpt = async(oppurtunity: Opportunity)  => {
+		try{
+			const {data, error} = await supabase
+			.from('opportunities')
+			.update({
+				school_year: currentSchoolYearId
+			})
+			.eq('id', oppurtunity.id)
+			.maybeSingle();
+
+			if(error){
+				displayAlert("Error carrying over opportunity: " + (error as Error).message, "error");
+				return;
+			}
+			else{
+				opportunities = opportunities.map((opportunity) => {
+					if(opportunity.id === oppurtunity.id){
+						return {
+							...opportunity,
+							school_year: currentSchoolYearId
+						}
+					}
+					return opportunity;
+				});
+				displayAlert("Opportunity carried over successfully!", "success");
+			}
+		}
+		catch(error){
+			displayAlert("Error carrying over opportunity: " + (error as Error).message, "error");
 		}
 	}
 
@@ -587,8 +645,10 @@
 							}}
 							onDelete={deleteOpportunity}
 							onApprove={approveOpportunity}
+							onCarryOver={() => carryOverOpt(opportunity)}
 							{approvingId}
 							{deletingId}
+							{currentSchoolYearId}
 						/>
 					{/each}
 				</tbody>

@@ -11,6 +11,7 @@
     ArrowUpDown,
     X,
     TriangleAlert,
+    ArchiveRestore,
   } from "lucide-svelte";
 
   interface Risk {
@@ -71,6 +72,7 @@
   let deletingId: string | null = $state(null);
 
   let schoolYears: SchoolYear[] = $state([]);
+  let currentSchoolYearId: number | null = $state(null);
 
   let classificationFilter: number | "all" = $state("all");
   let budgetRange: { min: number | null; max: number | null } = $state({
@@ -116,6 +118,42 @@
       schoolYears = data || [];
     }
   };
+
+  const fetchCurrentSchoolYear = async() => {
+    const today = new Date().toISOString().split("T")[0];
+
+    const { data, error } = await supabase
+      .from("school_years")
+      .select("id")
+      .lte("start_date", today)
+      .gte("end_date", today)
+      .maybeSingle();
+
+      if(error) throw error;
+      currentSchoolYearId = data?.id || null;
+      schoolYearFilter = currentSchoolYearId || "all";
+  }
+
+  const carryOverRisks = async (risk: Risk) => {
+    try{
+      const { data, error } = await supabase
+      .from("risks")
+      .update({ school_year: currentSchoolYearId })
+      .eq("id", risk.id);
+
+    if (error) {
+      console.error("Error carrying over risk:", error);
+      return;
+    }
+
+    risks = risks.map((r) => 
+    (r.id === risk.id ? { ...r, school_year: currentSchoolYearId } : r));
+    console.log("Risk carried over successfully.");
+    } 
+    catch (error) {
+      console.error("Error carrying over risk:", error);
+    }
+  }
 
   const fetchAdminName = async () => {
     try {
@@ -659,6 +697,7 @@
     await fetchCurrentUserRole();
     await fetchAdminName();
     await fetchSchoolYears();
+    await fetchCurrentSchoolYear();
     await fetchDepartments();
     await fetchRisks();
     await fetchRiskAssessments();
@@ -874,8 +913,10 @@
               {riskAssessments}
               onDelete={deleteRisk}
               onApprove={approveRisk}
+              onCarryOver={carryOverRisks(risk)}
               {approvingId}
               {deletingId}
+              {currentSchoolYearId}
             />
           {/each}
         </tbody>
