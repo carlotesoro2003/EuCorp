@@ -155,7 +155,9 @@
 
 <div class="min-h-screen grid lg:grid-cols-2 transition-colors duration-300 dark:bg-gray-900">
 	<!-- Left Section -->
-	<div class="relative hidden lg:block bg-cover bg-center" style="background-image: linear-gradient(180deg, rgba(103, 21, 21, 0.8) 0%, rgba(103, 21, 21, 0.3) 50%), url('/images/login_bg.png');">
+	<div class="relative hidden lg:block bg-cover bg-center" style="background-image: url('/images/login2.png'); background-color: rgba(0, 0, 0, 0.5); background-blend-mode: overlay;">
+
+
 		<!-- Brand Logo -->
 		<div class="absolute top-8 left-8 z-20">
 			<h1 class="text-4xl font-black text-white tracking-tight">Eucorp</h1>

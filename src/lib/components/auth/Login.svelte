@@ -152,10 +152,10 @@
 	</button>
 
 	<!-- Left Section -->
-	<div class="relative hidden lg:block bg-cover bg-center" style="background-image: linear-gradient(180deg, rgba(103, 21, 21, 0.8) 0%, rgba(103, 21, 21, 0.3) 50%), url('/images/login_bg.png');">
+	<div class="relative hidden lg:block bg-cover bg-center" style="background-image: linear-gradient(180deg, rgba(103, 21, 21, 0.8) 0%, rgba(103, 21, 21, 0.3) 50%), url('/images/login2.png');">
 		<div class="relative z-10 h-full flex flex-col items-center justify-center space-y-4 p-10">
 			<div class="text-center">
-				<h1 class="text-5xl font-extrabold text-white tracking-tight mb-4">EuCorp</h1>
+				<h1 class="text-5xl font-extrabold text-white tracking-tight mb-4">Eucorp</h1>
 				<p class="text-xl text-gray-300 max-w-md">Our Institutional Planning System</p>
 			</div>
 			<div class="mt-6 space-y-2 text-gray-200">
